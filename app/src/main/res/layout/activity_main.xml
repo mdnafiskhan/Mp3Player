@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/drawer_layout"
+    android:background="#ffffff"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <!-- The main content view -->
+
+    <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:id="@+id/rel"
+    android:background="#342b49"
+    android:layout_height="match_parent">
+
+
+
+        <android.support.v4.view.ViewPager
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/viewPager"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentStart="true">
+
+            <android.support.design.widget.TabLayout
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:id="@+id/tablayout"
+                app:tabIndicatorColor="#ffffff"
+                >
+
+
+
+            </android.support.design.widget.TabLayout>
+
+        </android.support.v4.view.ViewPager>
+
+        <ImageView
+            android:layout_width="70sp"
+            android:layout_height="70sp"
+            android:id="@+id/currentsong"
+            android:scaleType="fitXY"
+            android:clickable="true"
+            android:layout_gravity="end|bottom"
+            android:padding="2dp"
+            android:transitionName="zoom"
+            android:layout_marginBottom="30sp"
+            android:layout_marginEnd="30sp"
+            />
+    </FrameLayout>
+
+    <!-- The navigation drawer -->
+       <ListView android:id="@+id/left_drawer"
+        android:layout_width="300dp"
+        android:layout_height="match_parent"
+        android:padding="2dp"
+        android:layout_gravity="start"
+        android:choiceMode="singleChoice"
+        android:divider="@android:color/transparent"
+        android:dividerHeight="1dp"
+        android:background="#342b49" />
+
+</android.support.v4.widget.DrawerLayout>

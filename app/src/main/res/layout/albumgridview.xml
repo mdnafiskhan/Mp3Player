@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent">
+    <GridView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/gridview"
+        android:verticalSpacing="3dp"
+        android:horizontalSpacing="3dp"
+        android:background="#000000"
+        android:fastScrollEnabled="true"
+        android:fadeScrollbars="true"
+        android:clickable="true"
+        android:smoothScrollbar="true"
+        android:alpha="1"
+        android:visibility="visible"
+        android:numColumns="2"
+        android:choiceMode="multipleChoice" />
+
+</RelativeLayout>

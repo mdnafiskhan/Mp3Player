@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#000000">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingRight="30dp"
+        android:paddingLeft="30dp"
+        android:paddingBottom="10dp"
+        android:id="@+id/line1"
+        android:background="#000000"
+        android:orientation="vertical"
+        android:scrollbarSize="20dp"
+        android:scrollbarAlwaysDrawVerticalTrack="true"
+        android:scrollbarAlwaysDrawHorizontalTrack="true">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_weight="3.3"
+            android:layout_height="0dp">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/albumart"
+                android:scaleType="centerCrop"
+                android:paddingLeft="2dp"
+                android:paddingRight="2dp"
+                android:background="#000000"
+                android:layout_gravity="center_horizontal"
+                android:src="@mipmap/ic_launcher"
+                android:transitionName="zoom2"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentStart="true" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@id/albumart"
+                android:textSize="15sp"
+                android:alpha="0.7"
+                android:background="#000000"
+                android:id="@+id/albumname"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:text="album"
+                android:textColor="#ffffff" />
+        </RelativeLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:background="#b2824a"
+            android:paddingLeft="4sp"
+            android:paddingTop="5sp"
+            android:clickable="true"
+            android:layout_weight="0.8">
+
+            <ImageButton
+                android:layout_width="40dp"
+                android:layout_height="wrap_content"
+                android:scaleType="fitXY"
+                android:background="#b2824a"
+                android:src="@mipmap/shuffle" />
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="Shuffle All"
+                android:layout_marginStart="8dp"
+                android:layout_gravity="center_vertical"
+                android:gravity="center_vertical"
+                android:textColor="#000000"
+                />
+
+        </LinearLayout>
+        <ListView
+            android:layout_width="match_parent"
+            android:scrollbarStyle="insideOverlay"
+            android:scrollingCache="true"
+            android:scrollbars="vertical"
+            android:id="@+id/listView"
+            android:fadeScrollbars="true"
+            android:layout_weight="5"
+            android:paddingLeft="4dp"
+            android:paddingTop="7sp"
+            android:paddingRight="4dp"
+            android:paddingBottom="2dp"
+            android:scrollbarSize="40dp"
+            android:background="#b2824a"
+            android:fastScrollEnabled="true"
+            android:scrollbarFadeDuration="1000"
+            android:smoothScrollbar="true"
+            android:layout_height="0dp"
+            >
+
+        </ListView>
+    </LinearLayout>
+</LinearLayout>

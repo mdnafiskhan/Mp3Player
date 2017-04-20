@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:paddingTop="5dp"
+    android:paddingBottom="5dp"
+    android:layout_height="match_parent">
+    <TextView
+        android:layout_width="match_parent"
+        android:textColor="@android:color/black"
+        android:text="songname"
+        android:layout_height="wrap_content"
+        android:paddingStart="6sp"
+        android:maxLines="1"
+        android:paddingEnd="6sp"
+        android:textStyle="bold"
+        android:id="@+id/songname"
+        android:textSize="14sp"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:textSize="12sp"
+        android:text="artistname"
+        android:layout_height="wrap_content"
+        android:paddingStart="6sp"
+        android:paddingEnd="6sp"
+        android:paddingTop="3sp"
+        android:maxLines="1"
+        android:textStyle="bold"
+        android:id="@+id/artistname"
+        android:textColor="#7f6d7e" />
+</LinearLayout>

@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_gravity="center"
+    android:gravity="center"
+    android:padding="20dp"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+   <TextView
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content"
+       android:paddingLeft="20dp"
+       android:paddingRight="20dp"
+       android:id="@+id/dialogplay"
+       android:paddingBottom="10dp"
+       android:paddingTop="10dp"
+       android:text="Play" />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Play Next"
+        android:paddingLeft="20dp"
+        android:id="@+id/dialogplaynext"
+        android:paddingRight="20dp"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="20dp"
+        android:id="@+id/dialogqueue"
+        android:paddingRight="20dp"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:text="Queue" />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Add to Favorites"
+        android:paddingLeft="20dp"
+        android:paddingTop="10dp"
+        android:id="@+id/dialogaddtofav"
+        android:paddingRight="20dp"
+        android:paddingBottom="10dp"
+
+        />
+    <TextView
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:id="@+id/dialogalbum"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:text="Album" />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:paddingTop="10dp"
+        android:id="@+id/dialogartist"
+        android:paddingBottom="10dp"
+        android:text="Artist"
+        />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="20dp"
+        android:paddingTop="10dp"
+        android:id="@+id/dialogaddtoplaylsit"
+        android:paddingRight="20dp"
+        android:paddingBottom="10dp"
+        android:text="Add to Playlist" />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:id="@+id/dialogdelete"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:text="Delete"
+        />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:id="@+id/dialogshare"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:text="Share"/>
+       <TextView
+         android:layout_width="match_parent"
+         android:layout_height="wrap_content"
+         android:paddingLeft="20dp"
+         android:paddingRight="20dp"
+         android:id="@+id/dialogproperties"
+         android:paddingTop="10dp"
+         android:paddingBottom="10dp"
+         android:text="Properties"/>
+</LinearLayout>
