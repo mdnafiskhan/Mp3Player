@@ -21,6 +21,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.accessibility.AccessibilityManagerCompat;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -47,12 +49,15 @@ import com.developmentforfun.mdnafiskhan.mp3player.Models.Songs;
 import com.developmentforfun.mdnafiskhan.mp3player.R;
 import com.developmentforfun.mdnafiskhan.mp3player.Service.MusicService;
 import com.developmentforfun.mdnafiskhan.mp3player.SongLoader.songDetailloader;
+import com.developmentforfun.mdnafiskhan.mp3player.customAdapters.CustomRecyclerViewAdapter;
 import com.developmentforfun.mdnafiskhan.mp3player.customAdapters.ListViewAdapter;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import jp.wasabeef.recyclerview.animators.SlideInLeftAnimator;
 
 /**
  * Created by mdnafiskhan on 03-01-2017.
@@ -65,14 +70,10 @@ public class TracksFragment extends Fragment {
     MediaPlayer mp ;
     MusicService musicService;
     boolean mBound;
-    ImageView search;
     ListViewAdapter listViewAdapter;
-    RelativeLayout editreltive;
     AlertDialog dis;
-    ListView listView;
-    EditText editText;
-    TextView ch;
     private Cursor cursor ;
+    RecyclerView recyclerView ;
     int albumindex,dataindex,titleindex,durationindex,artistindex;
     private final static String[] columns ={MediaStore.Audio.Media.DATA, MediaStore.Audio.Media.DURATION, MediaStore.Audio.Media.ALBUM, MediaStore.Audio.Media.ARTIST, MediaStore.Audio.Media.TITLE, MediaStore.Audio.Media.IS_MUSIC,MediaStore.Audio.Media.IS_RINGTONE,MediaStore.Audio.Media.ARTIST,MediaStore.Audio.Media.SIZE ,MediaStore.Audio.Media._ID};
     private final String where = "is_music AND duration > 10000 AND _size <> '0' ";
@@ -96,7 +97,7 @@ public class TracksFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable final ViewGroup container, @Nullable Bundle savedInstanceState)
     {
         View v =inflater.inflate(R.layout.listviewofsongs,container,false);
-        listView = (ListView) v.findViewById(R.id.listView);
+        recyclerView = (RecyclerView) v.findViewById(R.id.recyclerview);
         new allsongs().execute();
        // allsongs();
        // intlistview();
@@ -107,24 +108,25 @@ public class TracksFragment extends Fragment {
                 getActivity().bindService(i, serviceConnection, Context.BIND_AUTO_CREATE);
             }
         }).start();
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        recyclerView.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id)
-            {
+            public void onClick(View v) {
+                Log.d("recycler view cliked","true");
+                int position = recyclerView.getChildAdapterPosition(v);
                 Log.d("Uri of ",""+give.get(position).getSonguri());
                 musicService.setplaylist(give,give.get(position).getPosition());
                 musicService.setMediaPlayer();
-                view.setSelected(true);
                 SharedPreferences sharedPreferences =getContext().getSharedPreferences("select",Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor= sharedPreferences.edit();
                 editor.putString("name",give.get(position).gettitle());
                 editor.apply();
-               // listViewAdapter.notifyDataSetChanged();
             }
         });
-        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+
+        recyclerView.setOnLongClickListener(new AdapterView.OnLongClickListener() {
             @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
+            public boolean onLongClick(View view) {
+                final int position = recyclerView.getChildAdapterPosition(view);
                 final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                 View v =LayoutInflater.from(getContext()).inflate(R.layout.select_dialog_layout,null);
                 builder.setView(v);
@@ -398,10 +400,9 @@ public class TracksFragment extends Fragment {
 
     public void intlistview()
     {
-        listViewAdapter = new ListViewAdapter(getContext(),give);
-        listViewAdapter.setCursor();
-        listView.setFriction(ViewConfiguration.getScrollFriction()*2);
-        listView.setAdapter(listViewAdapter);
+        recyclerView.setAdapter(new CustomRecyclerViewAdapter(getActivity(),give));
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity().getBaseContext()));
+        recyclerView.setItemAnimator(new SlideInLeftAnimator());
     }
 
     @Override
@@ -477,7 +478,7 @@ public class TracksFragment extends Fragment {
             intlistview();
         }
     }
-public class insertintoplaylist extends AsyncTask<Void,Void,Void>
+public static class insertintoplaylist extends AsyncTask<Void,Void,Void>
 {
     Songs s = new Songs();
     ArrayList<Songs> songs = new ArrayList<>();
@@ -516,5 +517,7 @@ public class insertintoplaylist extends AsyncTask<Void,Void,Void>
         }
     }
 }
+
+
 
 }

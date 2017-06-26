@@ -40,6 +40,7 @@ import com.developmentforfun.mdnafiskhan.mp3player.R;
 import com.developmentforfun.mdnafiskhan.mp3player.SongLoader.songDetailloader;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 
 public class MusicService extends Service implements MediaPlayer.OnInfoListener, MediaPlayer.OnPreparedListener ,AudioManager.OnAudioFocusChangeListener {
@@ -55,6 +56,8 @@ public class MusicService extends Service implements MediaPlayer.OnInfoListener,
     ArrayList<Songs> albumsonglist = new ArrayList<>();
     ArrayList<Uri> listofsongs = new ArrayList<>();
     ArrayList<Songs> priorityqueue = new ArrayList<>();
+    public Songs PlayNextSong = new Songs();
+    boolean isPlayNextSet = false;
     Intent intent;
     NotificationManager notificationManager;
     RemoteViews smallView ,largeView;
@@ -159,7 +162,36 @@ public class MusicService extends Service implements MediaPlayer.OnInfoListener,
     }
 //???????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????
     //new function...
+    //Important and final function...
 
+//1...
+  public Songs getNext()
+    {
+        if(isPlayNextSet)
+        {
+            isPlayNextSet = false;
+            return PlayNextSong;
+        }
+        else if(priorityqueue.size() == 0 || queuePosition == priorityqueue.size()) {
+            if (positionOfCurrentSong < (songs_current_playlist.size() - 1)) {
+                return songs_current_playlist.get(positionOfCurrentSong + 1);
+            } else {
+               return songs_current_playlist.get(0);
+            }
+        }
+        else
+        {
+            return priorityqueue.get(queuePosition);
+
+        }
+    }
+//2....
+    public void SetNext(Songs s)
+    {
+        this.PlayNextSong = s;
+        isPlayNextSet= true;
+        updatenotification();
+    }
 
     //setting the list ......
     public void setplaylist(ArrayList<Songs> songslist, int position)
@@ -472,8 +504,12 @@ public class MusicService extends Service implements MediaPlayer.OnInfoListener,
 
     public void playnext()
     {
-
-        if(priorityqueue.size() == 0 || queuePosition == priorityqueue.size()) {
+        if(PlayNextSong != null)
+        {
+            Current_playing_song = PlayNextSong;
+            PlayNextSong = null;
+        }
+        else if(priorityqueue.size() == 0 || queuePosition == priorityqueue.size()) {
             if (positionOfCurrentSong < (songs_current_playlist.size() - 1)) {
                 Current_playing_song = songs_current_playlist.get(positionOfCurrentSong + 1);
                 positionOfCurrentSong++;
@@ -557,9 +593,7 @@ public class MusicService extends Service implements MediaPlayer.OnInfoListener,
         largeView.setTextViewText(R.id.textView2,Current_playing_song.gettitle());
         largeView.setOnClickPendingIntent(R.id.imageButton8,play_p);
         if(positionOfCurrentSong < songs_current_playlist.size()-1)
-        largeView.setTextViewText(R.id.nextsong,"Next : " +songs_current_playlist.get(positionOfCurrentSong+1).gettitle());
-        else
-            largeView.setTextViewText(R.id.nextsong,"Next : " );
+        largeView.setTextViewText(R.id.nextsong,"Next : " +getNext().gettitle());
         largeView.setTextViewText(R.id.currentno,positionOfCurrentSong+1+"/"+songs_current_playlist.size());
         smallView.setOnClickPendingIntent(R.id.smallplay,play_p);
         largeView.setOnClickPendingIntent(R.id.imageButton7,prev_p);
@@ -597,6 +631,7 @@ public class MusicService extends Service implements MediaPlayer.OnInfoListener,
         builder.setSmallIcon(R.drawable.default_track_light);
         builder.setColor(Color.parseColor("#00000f"));
         builder.setContentTitle("Music Player");
+        builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
         builder.setPriority(Notification.PRIORITY_HIGH);
         builder.setContentText(data.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE));
         builder.setCustomContentView(smallView);
@@ -669,9 +704,7 @@ public class MusicService extends Service implements MediaPlayer.OnInfoListener,
         largeView.setTextViewText(R.id.textView2,Current_playing_song.gettitle());
         largeView.setOnClickPendingIntent(R.id.imageButton8,play_p);
         if(positionOfCurrentSong < songs_current_playlist.size()-1)
-            largeView.setTextViewText(R.id.nextsong,"Next : " +songs_current_playlist.get(positionOfCurrentSong+1).gettitle());
-        else
-            largeView.setTextViewText(R.id.nextsong,"Next : " );
+            largeView.setTextViewText(R.id.nextsong,"Next : " +getNext().gettitle());
         largeView.setOnClickPendingIntent(R.id.imageButton7,prev_p);
         largeView.setOnClickPendingIntent(R.id.imageButton9,next_p);
         smallView.setOnClickPendingIntent(R.id.smallprev,prev_p);
@@ -713,6 +746,7 @@ public class MusicService extends Service implements MediaPlayer.OnInfoListener,
         builder.setPriority(Notification.PRIORITY_HIGH);
         builder.setContentText(data.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE));
         builder.setCustomContentView(smallView);
+        builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
         builder.setCustomBigContentView(largeView);
         if(mediaPlayer.isPlaying())
        {

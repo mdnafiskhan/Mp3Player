@@ -135,28 +135,26 @@ public class MainActivity extends AppCompatActivity {
            if(!sharedPreferences.getString("uri","").equals(""))
            {
               String s = sharedPreferences.getString("uri","");
-               Uri u = Uri.parse(s);
-               currentsonguri = u;
-               MediaMetadataRetriever data=new MediaMetadataRetriever();
-               data.setDataSource(getBaseContext(),u);
-               try {
-                   byte[] b = data.getEmbeddedPicture();
-                   Bitmap bitmap = BitmapFactory.decodeByteArray(b, 0, b.length);
-                   bitmap = getRoundedCornerBitmap(bitmap);
-                   im.setImageBitmap(bitmap);
-               }
-               catch (Exception e)
-               {
-                   e.printStackTrace();
-               }
+               if(!s.isEmpty()) {
+                   Uri u = Uri.parse(s);
+                   currentsonguri = u;
+                   MediaMetadataRetriever data = new MediaMetadataRetriever();
+                   try {
+                       data.setDataSource(MainActivity.this, u);
+                       byte[] b = data.getEmbeddedPicture();
+                       Bitmap bitmap = BitmapFactory.decodeByteArray(b, 0, b.length);
+                       bitmap = getRoundedCornerBitmap(bitmap);
+                       im.setImageBitmap(bitmap);
+                   } catch (Exception e) {
+                       e.printStackTrace();
+                   }
 
-               try {
-                   musicService.setsongbyuri(u,getBaseContext());
-                   musicService.setMediaPlayer();
-               }
-               catch (Exception e)
-               {
-                   e.printStackTrace();
+                   try {
+                       musicService.setsongbyuri(u, getBaseContext());
+                       musicService.setMediaPlayer();
+                   } catch (Exception e) {
+                       e.printStackTrace();
+                   }
                }
            }
            else
@@ -228,33 +226,35 @@ public class MainActivity extends AppCompatActivity {
     public void setview(byte [] b, int position,Uri uri)
     {
         currentsonguri = uri;
+        Bitmap bitmap;
         Log.d("position in set view",""+position);
         Log.d("fail","i am here");
         if(im!=null)
         {
             if(b!=null)
             {
-                Bitmap bitmap = BitmapFactory.decodeByteArray(b, 0, b.length);
-               // bitmap = getRoundedCornerBitmap(bitmap);
+                 bitmap = BitmapFactory.decodeByteArray(b, 0, b.length);
                 im.setImageBitmap(bitmap);
             }
             else {
                 songDetailloader loader = new songDetailloader(context);
                 String s = loader.albumartwithalbum(loader.songalbum(position));
-                Log.d("fail","fail to set small image");
-                if (s != null) {
-                    im.setImageBitmap(BitmapFactory.decodeFile(s));
-                    Log.d("fail","nowsetting set small image");
+                bitmap = BitmapFactory.decodeFile(s);
+            }
+            try {
+                bitmap = getRoundedCornerBitmap(bitmap);
+            }
+            catch (Exception e)
+            {
+                Log.d("bitmap error","round bitmap is null");
+            }
+                if (bitmap != null) {
+                    im.setImageBitmap(bitmap);
                 } else {
                     im.setImageResource(R.drawable.default_track_light);
                     Log.d("ic","ic_launcher setted");
                 }
-
             }
-        }
-        else {
-            Log.d(""," im is null");
-        }
     }
 
 

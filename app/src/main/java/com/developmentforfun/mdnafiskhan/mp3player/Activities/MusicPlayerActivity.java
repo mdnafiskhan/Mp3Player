@@ -60,30 +60,18 @@ import java.util.ArrayList;
 public class MusicPlayerActivity extends Activity{
 
     public static boolean isactivityisrenning ;
-
-    LinearLayout lin, lin2;
-    Button start;
     public static RelativeLayout relativeLayout,moving;
-    Bitmap alart;
-    LinearLayout album_art;
-    TextView title, albumn, artistn, gener, composer, duration;
-    MediaPlayer song = new MediaPlayer();
     static ImageButton play, prev,next;
     Button info;
     static SeekBar seekBar;
-    int result,d,min,sec,min2,sec2;
-    int q = 0;
     byte[] a;
     boolean isClicked = false;
-    Uri uri;
     public static TextView album,current_time,total,like,addtoplaylist;
     int x;
     static ImageView albumart;
     static Bitmap image;
-    static LinearLayout backg;
     static TextView name;
     MediaMetadataRetriever data = new MediaMetadataRetriever();
-    Handler seekHandler = new Handler();
     public int seek_max;
     int currentsongposition;
     static Uri currentsonguri;

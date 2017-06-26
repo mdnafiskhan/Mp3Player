@@ -1,57 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:background="#ffffff"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
     <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
         android:layout_height="80dp"
-        android:layout_width="match_parent"
-        app:cardElevation="2dp"
-        app:cardPreventCornerOverlap="true"
-        app:cardCornerRadius="2dp"
-        android:layout_margin="4dp"
-        >
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:padding="3dp">
-       <ImageView
-           android:layout_width="77dp"
-           android:layout_height="77dp"
-           android:padding="5dp"
-           android:src="@drawable/default_track_light"
-           android:id="@+id/artistimage"/>
-        <TextView
-            android:text="SongName"
-            android:maxLines="1"
-            android:paddingTop="5dp"
-            android:paddingLeft="9dp"
-            android:textColor="#000000"
-            android:textSize="15dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/artistimage"
-            android:id="@+id/artistname"
-            />
+        android:layout_marginBottom="1dp"
+        app:cardPreventCornerOverlap="true">
 
-        <TextView
-            android:text="Albums"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_gravity="center_vertical"
-            android:paddingTop="1dp"
-            android:textColor="@android:color/darker_gray"
-            android:textSize="12dp"
-            android:paddingLeft="13dp"
-            android:layout_height="wrap_content"
-            android:maxLines="1"
-            android:layout_below="@id/artistname"
-            android:layout_toRightOf="@id/artistimage"
-            android:id="@+id/song_n_album"
-            />
-    </RelativeLayout>
+            android:layout_height="match_parent"
+            android:id="@+id/rr"
+            android:padding="3dp">
+
+            <TextView
+                android:id="@+id/artistimage"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:background="@drawable/circle"
+                android:gravity="center"
+                android:textAllCaps="true"
+                android:layout_centerVertical="true"
+                android:text="ST"
+                android:textSize="17sp"
+                android:textStyle="bold" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_centerVertical="true"
+                android:gravity="center_vertical"
+                android:layout_toRightOf="@+id/artistimage">
+
+                <TextView
+                    android:id="@+id/artistName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Arijit singh"
+                    android:textSize="15sp"
+                    android:textColor="#000000"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginLeft="12dp"
+                    app:layout_constraintLeft_toLeftOf="parent" />
+
+                <TextView
+                    android:id="@+id/nofosongs"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="2 Songs"
+                    android:textColor="#afb4bc"
+                    android:textSize="12sp"
+                    android:layout_marginLeft="20dp"
+                    android:layout_below="@+id/artistName"
+                    android:layout_marginTop="4dp"
+                   />
+            </RelativeLayout>
+
+        </RelativeLayout>
 
     </android.support.v7.widget.CardView>
 </LinearLayout>

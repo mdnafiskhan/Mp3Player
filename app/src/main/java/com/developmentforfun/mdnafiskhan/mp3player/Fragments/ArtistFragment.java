@@ -1,26 +1,24 @@
 package com.developmentforfun.mdnafiskhan.mp3player.Fragments;
 
-import android.content.Intent;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ListView;
 
-import com.developmentforfun.mdnafiskhan.mp3player.Activities.ArtistActivity;
-import com.developmentforfun.mdnafiskhan.mp3player.Activities.MainActivity;
 import com.developmentforfun.mdnafiskhan.mp3player.Models.Artists;
 import com.developmentforfun.mdnafiskhan.mp3player.R;
-import com.developmentforfun.mdnafiskhan.mp3player.SongLoader.songDetailloader;
-import com.developmentforfun.mdnafiskhan.mp3player.customAdapters.ArtistAdapter;
+import com.developmentforfun.mdnafiskhan.mp3player.customAdapters.ArtistRecyclerView;
 
 import java.util.ArrayList;
+
+import jp.wasabeef.recyclerview.animators.SlideInLeftAnimator;
 
 /**
  * Created by mdnafiskhan on 16-01-2017.
@@ -28,7 +26,7 @@ import java.util.ArrayList;
 
 public class ArtistFragment extends Fragment {
 
-    ListView listView ;
+    RecyclerView recyclerView;
     ArrayList<Artists> aa = new ArrayList<>();
     final String[] columns3 = {MediaStore.Audio.Artists._ID, MediaStore.Audio.Artists.ARTIST,MediaStore.Audio.Artists.NUMBER_OF_ALBUMS,MediaStore.Audio.Artists.NUMBER_OF_TRACKS};
     final static String orderBy3 = MediaStore.Audio.Albums.ARTIST;
@@ -48,7 +46,7 @@ public class ArtistFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v= inflater.inflate(R.layout.listviewofsongs,container,false);
 
-        listView  = (ListView) v.findViewById(R.id.listView);
+        recyclerView  = (RecyclerView) v.findViewById(R.id.recyclerview);
         new artist().execute();
         return v;
     }
@@ -69,17 +67,9 @@ public class ArtistFragment extends Fragment {
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-            ArtistAdapter artistAdapter = new ArtistAdapter(getActivity().getBaseContext(),aa);
-            listView.setAdapter(artistAdapter);
-            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    Intent i= new Intent(getActivity(), ArtistActivity.class);
-                    i.putExtra("artist", aa.get(position).getArtistname());
-                    i.putExtra("noofsongs",aa.get(position).getNofosongs());
-                    startActivity(i);
-                }
-            });
+            recyclerView.setAdapter(new ArtistRecyclerView(getActivity(),aa));
+            recyclerView.setLayoutManager(new LinearLayoutManager(getActivity().getBaseContext()));
+            recyclerView.setItemAnimator(new SlideInLeftAnimator());
         }
     }
 

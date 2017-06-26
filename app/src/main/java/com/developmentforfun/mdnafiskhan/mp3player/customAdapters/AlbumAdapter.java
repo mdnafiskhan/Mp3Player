@@ -96,15 +96,14 @@ public class AlbumAdapter extends BaseAdapter {
 
     public class get extends AsyncTask<Void,Void,Void>{
 
-        TextView noofsongs ,albumname;
+        TextView albumname;
         ImageView imageView;
         int position;
         Bitmap b;
-        String a,c;
+        String a;
 
         public get(TextView n,TextView al,int position,ImageView imageView) {
             super();
-            this.noofsongs = n;
             this.albumname = al ;
             this.imageView = imageView;
             this.position = position;
@@ -120,7 +119,6 @@ public class AlbumAdapter extends BaseAdapter {
             cursor.moveToPosition(position);
             Log.d("curr->",""+cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Albums.ALBUM)));
             a=cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Albums.ALBUM));
-            c=cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Albums.NUMBER_OF_SONGS));
             BitmapFactory.Options options = new BitmapFactory.Options();
             options.inSampleSize= 2;
             b=BitmapFactory.decodeFile(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Albums.ALBUM_ART)),options);
@@ -142,7 +140,6 @@ public class AlbumAdapter extends BaseAdapter {
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
             albumname.setText(a);
-            noofsongs.setText(c);
             if(b!=null)
             imageView.setImageBitmap(b);
             else

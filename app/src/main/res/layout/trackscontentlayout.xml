@@ -8,23 +8,22 @@
     >
 
     <android.support.v7.widget.CardView
-        android:layout_height="80dp"
-        android:layout_width="match_parent"
-        app:cardElevation="2dp"
-        android:layout_margin="2dp"
-        app:cardPreventCornerOverlap="true"
-        app:cardCornerRadius="2dp"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_marginBottom="1dp"
+        app:cardElevation="1dp"
         >
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:paddingTop="2dp"
-            android:paddingBottom="2dp">
+            android:layout_height="wrap_content"
+            android:paddingTop="1dp"
+            android:id="@+id/rl"
+            android:paddingBottom="1dp">
             <ImageView
-                android:layout_width="77dp"
-                android:layout_height="77dp"
-                android:padding="5dp"
+                android:layout_width="59dp"
+                android:layout_height="59dp"
+                android:padding="1dp"
                 android:src="@drawable/default_track_light"
                 android:id="@+id/albumart"/>
             <TextView
@@ -33,7 +32,7 @@
                 android:paddingTop="5dp"
                 android:paddingLeft="9dp"
                 android:textColor="#000000"
-                android:textSize="15dp"
+                android:textSize="12sp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_toRightOf="@id/albumart"
@@ -45,7 +44,7 @@
                 android:layout_gravity="center_vertical"
                 android:paddingTop="1dp"
                 android:textColor="@android:color/darker_gray"
-                android:textSize="12dp"
+                android:textSize="9sp"
                 android:paddingLeft="13dp"
                 android:layout_height="wrap_content"
                 android:maxLines="1"
@@ -55,11 +54,12 @@
                 />
             <TextView
                 android:layout_width="wrap_content"
-                android:layout_height="30dp"
+                android:layout_height="wrap_content"
                 android:text="00:00"
-                android:layout_alignParentBottom="true"
+                android:textSize="10sp"
+                android:layout_below="@+id/albumname"
                 android:layout_alignParentRight="true"
-                android:layout_marginRight="10dp"
+                android:layout_marginRight="5dp"
                 android:textColor="#000000"
                 android:id="@+id/durr"/>
         </RelativeLayout>
