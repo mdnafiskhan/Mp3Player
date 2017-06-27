@@ -37,7 +37,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -60,13 +60,13 @@ import java.util.ArrayList;
 public class MusicPlayerActivity extends Activity{
 
     public static boolean isactivityisrenning ;
-    public static RelativeLayout relativeLayout,moving;
-    static ImageButton play, prev,next;
+    public static RelativeLayout relativeLayout;
+    static ImageView play, prev,next;
     Button info;
     static SeekBar seekBar;
     byte[] a;
     boolean isClicked = false;
-    public static TextView album,current_time,total,like,addtoplaylist;
+    public static TextView album,current_time,total;
     int x;
     static ImageView albumart;
     static Bitmap image;
@@ -88,7 +88,7 @@ public class MusicPlayerActivity extends Activity{
     protected void onCreate(@Nullable Bundle savedInstanceState) {
             overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
             super.onCreate(savedInstanceState);
-            setContentView(R.layout.music_player_layout);
+            setContentView(R.layout.music_player_layout2);
             Intent recived = getIntent();
             currentsonguri = recived.getData();
             flag = recived.getIntExtra("flag",0);
@@ -143,14 +143,11 @@ public class MusicPlayerActivity extends Activity{
                 }).run();
             }
         relativeLayout = (RelativeLayout) findViewById(R.id.relativeLayout);
-        moving = (RelativeLayout) findViewById(R.id.moving);
         seekBar = (SeekBar) findViewById(R.id.seek);
-        play = (ImageButton) findViewById(R.id.play);
-        like = (TextView) findViewById(R.id.liketext);
-        addtoplaylist = (TextView) findViewById(R.id.playlist);
+        play = (ImageView) findViewById(R.id.play);
         album = (TextView) findViewById(R.id.songalbum_andartist);
-        prev = (ImageButton) findViewById(R.id.prev);
-        next =(ImageButton) findViewById(R.id.next);
+        prev = (ImageView) findViewById(R.id.prev);
+        next =(ImageView) findViewById(R.id.next);
         total =(TextView) findViewById(R.id.totaltime);
         current_time= (TextView) findViewById(R.id.currtime);
         albumart = (ImageView) findViewById(R.id.albumart);
@@ -214,7 +211,7 @@ public class MusicPlayerActivity extends Activity{
                 return true;
             }
         });
-            albumart.setOnClickListener(new View.OnClickListener() {
+          /*  albumart.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     if(c%2==0) {
@@ -235,6 +232,7 @@ public class MusicPlayerActivity extends Activity{
                     }
                 }
             });
+            */
             play.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -251,7 +249,7 @@ public class MusicPlayerActivity extends Activity{
 
             }
         });
-            like.setOnClickListener(new View.OnClickListener() {
+      /*      like.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     DataBaseClass db = new DataBaseClass(getBaseContext());
@@ -360,7 +358,7 @@ public class MusicPlayerActivity extends Activity{
                        dis = builder.show();
                     }
                 }
-            });
+            });*/
 
             next.setOnClickListener(new View.OnClickListener() {
                 @Override

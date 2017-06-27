@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layer-list xmlns:android="http://schemas.android.com/apk/res/android" >
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <gradient
+        android:startColor="#123342"
+        android:centerColor="#518096"
+        android:endColor="#055275"
+        android:angle="90"
+        />
+    <corners
+        android:radius="0dp"
+        />
 
-    <item android:drawable="@drawable/circle"/>
-
-</layer-list>
+</shape>
