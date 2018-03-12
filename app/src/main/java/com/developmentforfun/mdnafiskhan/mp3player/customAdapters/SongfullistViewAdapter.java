@@ -1,9 +1,14 @@
 package com.developmentforfun.mdnafiskhan.mp3player.customAdapters;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.media.MediaMetadataRetriever;
+import android.net.Uri;
+import android.os.AsyncTask;
+import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +18,7 @@ import android.widget.TextView;
 
 import com.developmentforfun.mdnafiskhan.mp3player.Models.Songs;
 import com.developmentforfun.mdnafiskhan.mp3player.R;
+import com.developmentforfun.mdnafiskhan.mp3player.SongLoader.SongDetailLoader;
 
 import java.util.ArrayList;
 
@@ -25,10 +31,18 @@ public class SongfullistViewAdapter extends BaseAdapter {
     LayoutInflater inflater ;
     Context context;
     ArrayList<Songs> s= new ArrayList<>();
+    Cursor cursor;
+    SongDetailLoader songDetailLoader;
     public SongfullistViewAdapter(Context context ,ArrayList<Songs> s) {
         this.context = context ;
         this.s= s;
         inflater = LayoutInflater.from(context);
+        songDetailLoader = new SongDetailLoader(context);
+    }
+
+    public void setCursor()
+    {
+        this.cursor = songDetailLoader.getSongCursor(this.context);
     }
 
     @Override
@@ -65,6 +79,8 @@ public class SongfullistViewAdapter extends BaseAdapter {
 
         return convertView;
     }
+
+
 
 
 

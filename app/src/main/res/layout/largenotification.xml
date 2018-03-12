@@ -1,119 +1,143 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-xmlns:app="http://schemas.android.com/apk/res-auto"
-android:layout_width="match_parent"
-android:background="#ffffff"
-android:layout_height="130sp">
-
-<ImageView
-    android:layout_width="130sp"
-    android:id="@+id/icon"
-    android:scaleType="fitXY"
-    android:layout_height="130sp"
-    android:background="#000000"/>
-
-    <TextView
-
-    android:text="This is the name of song currently being played"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+   xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:paddingStart="2sp"
-    android:paddingEnd="2sp"
-    android:maxLines="1"
-    android:ellipsize="end"
-    android:layout_marginStart="4sp"
-    android:layout_height="wrap_content"
-    android:textAlignment="textStart"
-    android:textSize="19sp"
-    android:id="@+id/textView2"
-    android:textColor="#000000"
-    android:layout_marginTop="2sp"
-    android:layout_toEndOf="@+id/icon" />
-<TextView
-    android:text="Album"
-    android:layout_width="match_parent"
-    android:paddingLeft="7sp"
-    android:layout_toEndOf="@id/icon"
-    android:textSize="15sp"
-    android:maxLines="1"
-    android:ellipsize="end"
-    android:fontFamily="sans-serif-small"
-    android:layout_marginRight="2sp"
-    android:layout_below="@id/textView2"
-    android:layout_height="wrap_content"
-    android:id="@+id/textView3"
-    android:textColor="#033c3f" />
+   android:background="#ffffff"
+   android:orientation="vertical"
+   android:layout_height="wrap_content">
 
-    <TextView
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/nextsong"
-        android:layout_toEndOf="@+id/icon"
-        android:paddingLeft="7sp"
-        android:maxLines="1"
-        android:textSize="12sp"
-        android:layout_below="@+id/textView3"
-        android:textColor="#000000"
-        android:text="Next Song"/>
+        android:layout_height="match_parent">
+        <ImageView
+            android:layout_width="110dp"
+            android:id="@+id/icon"
+            android:layout_margin="2dp"
+            android:scaleType="fitXY"
+            android:layout_height="110dp"
+            android:background="#000000"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginBottom="8dp"
+          />
+        <TextView
+            android:text="Song name"
+            android:layout_width="wrap_content"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:paddingLeft="8dp"
+            android:layout_height="wrap_content"
+            android:textAlignment="textStart"
+            android:textSize="16sp"
+            android:id="@+id/textView2"
+            android:textColor="#000000"
+            android:layout_toEndOf="@+id/icon"
+            android:layout_marginTop="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_alignParentTop="true"
+            android:layout_toRightOf="@+id/icon"
+            />
+        <TextView
+            android:text="Album"
+            android:layout_width="wrap_content"
+            android:layout_toEndOf="@id/icon"
+            android:textSize="10sp"
+            android:paddingLeft="8dp"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:fontFamily="sans-serif-small"
+            android:layout_below="@id/textView2"
+            android:layout_height="wrap_content"
+            android:id="@+id/textView3"
+            android:textColor="#033c3f"
+            android:layout_marginRight="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginEnd="8dp"
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:text="34/399"
-        android:textSize="12sp"
-        android:maxLines="1"
-        android:layout_below="@id/nextsong"
-        android:id="@+id/currentno"
-        android:textColor="#000000"
-        />
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/nextsong"
+            android:layout_toEndOf="@+id/icon"
+            android:paddingLeft="8dp"
+            android:maxLines="1"
+            android:textSize="12sp"
+            android:layout_below="@+id/textView3"
+            android:textColor="#000000"
+            android:text="Next Song"
+            android:layout_marginTop="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_toLeftOf="@+id/icon"
+             />
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:text="0/0"
+            android:textSize="12sp"
+            android:maxLines="1"
+            android:layout_below="@id/nextsong"
+            android:id="@+id/currentno"
+            android:textColor="#000000"
+            android:layout_marginRight="8dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="8dp" />
+
+    </RelativeLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_alignParentBottom="true"
         android:orientation="horizontal"
-        android:paddingBottom="2dp"
+        android:padding="2dp"
         android:layout_toRightOf="@id/icon"
-        android:layout_height="40dp">
+        android:layout_height="wrap_content">
 
         <ImageButton
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             app:srcCompat="@android:drawable/ic_media_previous"
             android:scaleType="fitCenter"
-            android:layout_marginRight="10dp"
             android:id="@+id/imageButton7"
-            android:layout_weight="1"
             android:layout_alignParentBottom="true"
-            android:layout_toEndOf="@+id/icon"
-            android:background="#ffffff" />
+            android:background="#ffffff"
+            android:layout_weight="1"
+             />
 
         <ImageButton
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             app:srcCompat="@android:drawable/ic_media_play"
-            android:layout_weight="1"
-            android:layout_marginRight="10dp"
-            android:layout_marginLeft="10dp"
             android:scaleType="fitCenter"
             android:id="@+id/imageButton8"
+            android:layout_weight="1"
             android:background="#ffffff"
             android:layout_alignParentBottom="true"
             android:layout_toStartOf="@+id/imageButton9"
-            />
+
+           />
 
         <ImageButton
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             app:srcCompat="@android:drawable/ic_media_next"
             android:layout_alignParentBottom="true"
-            android:layout_weight="1"
             android:scaleType="fitCenter"
-            android:layout_marginLeft="10dp"
             android:layout_alignParentEnd="true"
+            android:layout_weight="1"
             android:id="@+id/imageButton9"
-            android:background="#ffffff" />
+            android:background="#ffffff"
+            />
 
 
 
@@ -122,4 +146,4 @@ android:layout_height="130sp">
     </LinearLayout>
 
 
-</RelativeLayout>
+</LinearLayout>

@@ -1,12 +1,13 @@
 package com.developmentforfun.mdnafiskhan.mp3player.CustomView;
 import android.content.Context;
 import android.graphics.Canvas;
+import android.support.v7.widget.AppCompatSeekBar;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.widget.SeekBar;
 
-public class VerticalSeekBar extends SeekBar implements SeekBar.OnSeekBarChangeListener {
+public class VerticalSeekBar extends AppCompatSeekBar implements SeekBar.OnSeekBarChangeListener {
 
     int progress;
 
@@ -53,10 +54,12 @@ public class VerticalSeekBar extends SeekBar implements SeekBar.OnSeekBarChangeL
 
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
+                super.onTouchEvent(event);
                 Log.d("Action down","Progress ="+progress);
             case MotionEvent.ACTION_MOVE:
                 Log.d("Action move","Progress ="+progress);
             case MotionEvent.ACTION_UP:
+                super.onTouchEvent(event);
                 if(event.getY()<=getHeight() && event.getY()>=0) {
                     progress = getMax() - (int) (getMax() * event.getY() / getHeight());
                     Log.d("Action up", "Progress =" + progress);

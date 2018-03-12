@@ -1,63 +1,82 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.developmentforfun.mdnafiskhan.mp3player">
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.SET_WALLPAPER_HINTS"/>
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.SET_WALLPAPER"/>
-    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
+
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.SET_WALLPAPER_HINTS" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.SET_WALLPAPER" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
 
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:largeHeap="true"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
             android:name=".Activities.MainActivity"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
-                <data android:mimeType="audio/mp3" android:scheme="file" />
+
+                <data
+                    android:mimeType="audio/mp3"
+                    android:scheme="file" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
-                <data android:mimeType="audio/mp3" android:scheme="content" />
+
+                <data
+                    android:mimeType="audio/mp3"
+                    android:scheme="content" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
-                <data android:mimeType="audio/mp3" android:scheme="uri" />
+
+                <data
+                    android:mimeType="audio/mp3"
+                    android:scheme="uri" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
-                <data android:mimeType="audio/mp3" android:scheme="audio" />
+
+                <data
+                    android:mimeType="audio/mp3"
+                    android:scheme="audio" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <category android:name="android.intent.category.APP_MUSIC" />
-                <data android:scheme="http" android:pathPattern=".*mp3" android:mimeType="audio/*" />
-            </intent-filter>
-        </activity>
-        <activity android:name=".Activities.AlbumDetail">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.DEFAULT" />
+                <data
+                    android:mimeType="audio/*"
+                    android:pathPattern=".*mp3"
+                    android:scheme="http" />
             </intent-filter>
         </activity>
-        <activity android:name=".Activities.Playlist">
+        <activity
+            android:name=".Activities.AlbumDetail"
+            android:theme="@style/AlbumTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -65,23 +84,35 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".Activities.MusicPlayerActivity"
+            android:name=".Activities.Playlist"
+            android:theme="@style/AppTheme">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".Activities.PlayerActivity"
             android:label="Now Playing"
-            android:theme="@style/Theme.AppCompat.NoActionBar">
-        <intent-filter>
-            <action android:name="android.intent.action.MAIN" />
-            <category android:name="android.intent.category.DEFAULT" />
-        </intent-filter>
+            android:theme="@style/AppTheme">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
         </activity>
         <activity
             android:name=".Activities.EqualiserAc"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity android:name=".Activities.PlaylistActivity"
+        <activity
+            android:name=".Activities.PlaylistActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -89,7 +120,8 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity android:name=".Activities.ArtistActivity"
+        <activity
+            android:name=".Activities.ArtistActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -97,15 +129,37 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+
         <receiver android:name=".BroadcastRecivers.MediaButtonReciver">
             <intent-filter>
                 <action android:name="android.intent.action.MEDIA_BUTTON" />
             </intent-filter>
-            </receiver>
-        <service android:name=".Service.MusicService"
-            android:exported="false"/>
+        </receiver>
 
+        <service
+            android:name=".Service.MusicService"
+            android:exported="false" />
 
+        <activity
+            android:name=".Activities.Scrolling_Album_Activity"
+            android:label="@string/title_activity_scrolling__album_"
+            android:theme="@style/AlbumTheme" />
+        <activity
+            android:name=".Activities.Artist_Activity"
+            android:label="@string/title_activity_artist_"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".Activities.Genre_Activity"
+            android:theme="@style/AppTheme" />
+        <activity android:name=".Activities.NowPlaying_Activity"
+            android:theme="@style/AppTheme">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+
+        </activity>
     </application>
 
 </manifest>

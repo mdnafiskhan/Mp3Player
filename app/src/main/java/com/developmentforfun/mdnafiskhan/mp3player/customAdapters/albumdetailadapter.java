@@ -1,21 +1,18 @@
 package com.developmentforfun.mdnafiskhan.mp3player.customAdapters;
 
 import android.content.Context;
-import android.icu.text.StringSearch;
 import android.media.MediaMetadataRetriever;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.developmentforfun.mdnafiskhan.mp3player.Models.Songs;
 import com.developmentforfun.mdnafiskhan.mp3player.R;
-import com.developmentforfun.mdnafiskhan.mp3player.SongLoader.songDetailloader;
+import com.developmentforfun.mdnafiskhan.mp3player.SongLoader.SongDetailLoader;
 
 import java.util.ArrayList;
-import java.util.BitSet;
 
 /**
  * Created by mdnafiskhan on 04-01-2017.
@@ -26,7 +23,7 @@ public class albumdetailadapter extends BaseAdapter {
     ArrayList<Songs> songs = new ArrayList<>();
     ArrayList<String> song = new ArrayList<>();
     ArrayList<String> artist = new ArrayList<>();
-    songDetailloader songloader = new songDetailloader();
+    SongDetailLoader songloader = new SongDetailLoader();
     public albumdetailadapter(Context context,ArrayList<Songs> songwithalbum) {
         MediaMetadataRetriever data = new MediaMetadataRetriever();
         songs = songwithalbum;
@@ -68,9 +65,8 @@ public class albumdetailadapter extends BaseAdapter {
         convertView = layoutInflater.inflate(R.layout.layou_for_albumdetail,parent,false);
         TextView songname =(TextView) convertView.findViewById(R.id.songname);
         TextView artistname =(TextView) convertView.findViewById(R.id.artistname);
-        songname.setText(position+1+". "+song.get(position));
+        songname.setText(""+song.get(position));
         artistname.setText(artist.get(position));
-
         return convertView;
     }
 }

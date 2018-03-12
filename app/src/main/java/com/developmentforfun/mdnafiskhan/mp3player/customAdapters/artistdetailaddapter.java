@@ -21,6 +21,8 @@ import com.developmentforfun.mdnafiskhan.mp3player.R;
 
 import java.util.ArrayList;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 /**
  * Created by mdnafiskhan on 05-02-2017.
  */
@@ -32,7 +34,6 @@ public class artistdetailaddapter extends BaseAdapter {
     TextView Songname;
     TextView albumname;
     TextView duration ;
-    ImageView imageView;
     Context context;
 
     public artistdetailaddapter(Context context , ArrayList<Songs> give ) {
@@ -64,11 +65,9 @@ public class artistdetailaddapter extends BaseAdapter {
         Songname = (TextView) convertView.findViewById(R.id.songname);
         albumname = (TextView) convertView.findViewById(R.id.albumname);
         duration = (TextView) convertView.findViewById(R.id.durr);
-        imageView = (ImageView) convertView.findViewById(R.id.albumart);
         Songname.setText(give.get(position).gettitle());
         albumname.setText(give.get(position).getalbum());
         duration.setText(time(give.get(position).getDuration()));
-        new getalbumart(imageView,position);
         return convertView;
     }
 
@@ -85,38 +84,6 @@ public class artistdetailaddapter extends BaseAdapter {
         else
             s= ""+min+":"+sec;
         return s;
-    }
-    public class getalbumart extends AsyncTask<Void,Void,Void>{
-        Bitmap bitmap;
-        ImageView imageView ;
-        int p;
-        public getalbumart(ImageView v,int position)
-        {
-            this.imageView = v;
-            this.p = position ;
-        }
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            imageView.setImageBitmap(bitmap);
-        }
-
-        @Override
-        protected Void doInBackground(Void... params) {
-            Uri u= give.get(p).getSonguri();
-            MediaMetadataRetriever m= new MediaMetadataRetriever();
-            m.setDataSource(context,u);
-            byte[] a = m.getEmbeddedPicture();
-            if(a!=null)
-            bitmap = BitmapFactory.decodeByteArray(a,0,0);
-            return null;
-        }
     }
 
 }
