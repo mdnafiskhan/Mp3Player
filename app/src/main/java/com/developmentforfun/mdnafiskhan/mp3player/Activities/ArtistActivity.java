@@ -38,7 +38,7 @@ public class ArtistActivity extends Activity {
     ArrayList<String> album = new ArrayList<>();
     ArrayList<Long> duration = new ArrayList<>();
     ArrayList<Songs> give = new ArrayList<>();
-    final String[] columns = {MediaStore.Audio.Media.DATA, MediaStore.Audio.Media.DURATION, MediaStore.Audio.Media.ALBUM, MediaStore.Audio.Media.ARTIST, MediaStore.Audio.Media.TITLE, MediaStore.Audio.Media.IS_MUSIC,MediaStore.Audio.Media.IS_RINGTONE,MediaStore.Audio.Media.ARTIST,MediaStore.Audio.Media.SIZE ,MediaStore.Audio.Media._ID};
+    final String[] columns = {MediaStore.Audio.Media.DATA,MediaStore.Audio.Media._ID, MediaStore.Audio.Media.DURATION, MediaStore.Audio.Media.ALBUM, MediaStore.Audio.Media.ARTIST, MediaStore.Audio.Media.TITLE, MediaStore.Audio.Media.IS_MUSIC,MediaStore.Audio.Media.IS_RINGTONE,MediaStore.Audio.Media.ARTIST,MediaStore.Audio.Media.SIZE ,MediaStore.Audio.Media._ID,MediaStore.Audio.Media.ALBUM_ID};
     final static String orderBy = MediaStore.Audio.Media.TITLE;
     Cursor cursor ;
     @Override
@@ -86,6 +86,8 @@ public class ArtistActivity extends Activity {
                 songs.setSonguri(Uri.parse(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DATA))));
                 songs.setartist(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST)));
                 songs.setalbum(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM)));
+                songs.setAlbumId(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM_ID)));
+                songs.setSongId(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media._ID)));
                 songs.setDuration(Long.decode(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DURATION))));
                 songs.setPosition(i);
                 give.add(songs);
@@ -122,6 +124,7 @@ public class ArtistActivity extends Activity {
     @Override
     protected void onStop() {
         super.onStop();
+        if(mBound)
         unbindService(serviceConnection);
     }
 }

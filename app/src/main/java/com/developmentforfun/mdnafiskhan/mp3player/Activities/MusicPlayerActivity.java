@@ -1,46 +1,40 @@
 package com.developmentforfun.mdnafiskhan.mp3player.Activities;
 
+import android.animation.Animator;
+import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.graphics.Path;
 import android.media.MediaMetadataRetriever;
-import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
 import android.provider.MediaStore;
 import android.renderscript.Allocation;
 import android.renderscript.Element;
 import android.renderscript.RenderScript;
 import android.renderscript.ScriptIntrinsicBlur;
 import android.support.annotation.Nullable;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.graphics.Palette;
 import android.util.Log;
-import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -51,23 +45,27 @@ import com.developmentforfun.mdnafiskhan.mp3player.Models.Songs;
 import com.developmentforfun.mdnafiskhan.mp3player.R;
 import com.developmentforfun.mdnafiskhan.mp3player.Service.MusicService;
 
-import com.developmentforfun.mdnafiskhan.mp3player.SongLoader.songDetailloader;
-import com.developmentforfun.mdnafiskhan.mp3player.customAdapters.ListViewAdapter;
+import com.developmentforfun.mdnafiskhan.mp3player.SongLoader.SongDetailLoader;
+import com.developmentforfun.mdnafiskhan.mp3player.ViewpagerAnimation.ZoomOutPageTransformer;
+import com.developmentforfun.mdnafiskhan.mp3player.customAdapters.CustomAdapter;
 
-import java.io.File;
 import java.util.ArrayList;
 
-public class MusicPlayerActivity extends Activity{
+import jp.wasabeef.blurry.Blurry;
+
+public class MusicPlayerActivity extends AppCompatActivity{
 
     public static boolean isactivityisrenning ;
     public static RelativeLayout relativeLayout;
-    static ImageView play, prev,next;
+    public LinearLayout mainline;
+    static ImageView play, prev,next,background;
     Button info;
     static SeekBar seekBar;
     byte[] a;
     boolean isClicked = false;
     public static TextView album,current_time,total;
     int x;
+    float xcor=0;
     static ImageView albumart;
     static Bitmap image;
     static TextView name;
@@ -76,87 +74,100 @@ public class MusicPlayerActivity extends Activity{
     int currentsongposition;
     static Uri currentsonguri;
     int flag;
-    songDetailloader loader;
+    SongDetailLoader loader;
     public static Context context;
     private int c= 0;
     Songs currentsong = new Songs();
    public static MusicService music= new MusicService();
+   public  Animation zoomin, zoomout;
+   boolean zoomingin;
     boolean mBound;
     AlertDialog dis ;
     int position;
+    ViewPager viewPager;
         @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
             overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
             super.onCreate(savedInstanceState);
             setContentView(R.layout.music_player_layout2);
+            Log.d("here in ..........","onCreate");
+            viewPager = (ViewPager) findViewById(R.id.ViewPager);
+            viewPager.setPageTransformer(true,new ZoomOutPageTransformer());
+            viewPager.setAdapter(new CustomAdapter(getSupportFragmentManager()));
             Intent recived = getIntent();
             currentsonguri = recived.getData();
+            background = (ImageView) findViewById(R.id.backimage) ;
             flag = recived.getIntExtra("flag",0);
             Log.d("values","flag ="+flag);
             Log.d("currentsonguri",""+currentsonguri);
+            Log.d("current playlist size",""+music.getPlaylist().size());
             Intent i = new Intent(this, MusicService.class);
             bindService(i, serviceConnection, Context.BIND_AUTO_CREATE);
+            mBound = true;
             Log.d("activity", "Create");
             isactivityisrenning = true;
             context = getBaseContext();
             c=0;
-             loader = new songDetailloader(getBaseContext());
+             loader = new SongDetailLoader(getBaseContext());
             Log.d("mystatus", "" + isactivityisrenning);
-            if(flag == 0)
-            {
-                String s =currentsonguri.getPath();
-                Log.d("floag ==0 and path",""+currentsonguri.getPath());
-                currentsong = loader.sonngwithuri(s);
-                Log.d("current song title",""+currentsong.gettitle());
-                music.setonlyonesong(currentsong,this);
-            }
-
-          /*  if(flag == 0)
-            {
-                    if(music.mediaPlayer.isPlaying())
-                    {
-                        music.stop();
-                    }
-                    MediaPlayer mp =MediaPlayer.create(this,currentsonguri);
-                    mp.start();
-
-            }
-            if(flag == 0) {
-
-                data.setDataSource(this,currentsonguri);
+            if(music.mediaPlayer.isPlaying() &&savedInstanceState==null) {
+                if (mBound) {
+                    Log.d("", "i think service is bounded");
+                    music.setnotification();
+                }
+                updateyourself();
             }
             else
-            {*/
-            if(flag!=0) {
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        String s =currentsonguri.getPath();
-                        Log.d("floag ==0 and path",""+currentsonguri.getPath());
-                        currentsong = loader.sonngwithuri(s);
-                        Log.d("Loader return song", "" + currentsong.gettitle() + " at " + currentsong.getPosition());
-                        if (mBound) {
-                            Log.d("", "i think service is bounded");
-                            music.setnotification();
-                        }
-                    }
-                }).run();
+            {
+                updateyourself();
             }
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                Log.d("onPageSelected","true");
+                int p = MusicService.positionOfCurrentSong;
+                Log.d(" p =",p+"");
+                int max = music.getPlaylist().size()-1;
+                if(p>=0 || p<=max)
+                {
+                    if(position-p==1)
+                    {
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Looper.prepare();
+                                music.playnext(true);
+                            }
+                        }).start();
+                        updateyourself();
+                    }
+                    else if(p-position==1)
+                        music.playprev();
+                    currentsong = music.getCurrentsong();
+                }
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
         relativeLayout = (RelativeLayout) findViewById(R.id.relativeLayout);
         seekBar = (SeekBar) findViewById(R.id.seek);
+        seekBar.setMax(1000);
         play = (ImageView) findViewById(R.id.play);
         album = (TextView) findViewById(R.id.songalbum_andartist);
         prev = (ImageView) findViewById(R.id.prev);
         next =(ImageView) findViewById(R.id.next);
         total =(TextView) findViewById(R.id.totaltime);
         current_time= (TextView) findViewById(R.id.currtime);
-        albumart = (ImageView) findViewById(R.id.albumart);
-         name = (TextView) findViewById(R.id.heding);
-            Log.d("size of list",""+music.songs_current_playlist.size());
-            seek_max= (int) currentsong.getDuration()/100; ///its nedds to to changed also...
-            seekBar.setMax(100);
-            seekBar.setProgress(0);
-          //  seekUpdation(seek_max);
+       // albumart = (ImageView) findViewById(R.id.albumart);
+            name = (TextView) findViewById(R.id.heding);
             play.setImageResource(android.R.drawable.ic_media_pause);
             prev.setImageResource(android.R.drawable.ic_media_previous);
             next.setImageResource(android.R.drawable.ic_media_next);
@@ -168,7 +179,8 @@ public class MusicPlayerActivity extends Activity{
                  data.setDataSource(this,u);
                  a = data.getEmbeddedPicture();
                  image = BitmapFactory.decodeByteArray(a, 0, a.length);
-                 albumart.setImageBitmap(image);
+                /// albumart.setImageBitmap(image);
+                 setBlurBackdround(image);
                  Log.d("SET","i have set the album art");
                 // updatePlayerBar(image);
 
@@ -176,63 +188,47 @@ public class MusicPlayerActivity extends Activity{
        catch (IllegalArgumentException e) {
            String s =loader.albumartwithalbum(currentsong.getalbum());
               if(s!=null)
-           albumart.setImageBitmap(BitmapFactory.decodeFile(s));
+         /* albumart.setImageBitmap(BitmapFactory.decodeFile(s));
              else
               {
-                  albumart.setImageResource(R.drawable.default_track_light);
-              }
+               //   albumart.setImageResource(R.drawable.default_track_light);
+              }*/
            Log.d("SET", "Exeption occur in imagesetting");
 
        }catch (Exception e)
       {
           e.printStackTrace();
       }
-        try {
-
-           // Bitmap blurredBitmap = blur(image);
-           // BitmapDrawable ob = new BitmapDrawable(getResources(), blurredBitmap);
-            //backg.setBackground(ob);
-            current_time.setText(gettimeinformat(music.getcurrentpositionofsongtime()));
-            name.setText(currentsong.gettitle());
-            album.setText(currentsong.getartist()+" - "+currentsong.getalbum());
-            total.setText(gettimeinformat((int) currentsong.getDuration()));
-
-        } catch (Exception e) {
-            name.setText("unknown title");
-            album.setText("unknown artist - unknown album");
-        }
         //  Animation animation=AnimationUtils.loadAnimation(getApplicationContext(),R.anim.animation);
       //      album_gridview.startAnimation(animation);
-        albumart.setOnLongClickListener(new View.OnLongClickListener() {
+      /*  albumart.setOnTouchListener(new View.OnTouchListener() {
             @Override
-            public boolean onLongClick(View v) {
-                Animation animation=AnimationUtils.loadAnimation(getApplicationContext(), android.R.anim.fade_in);
-                albumart.startAnimation(animation);
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction())
+                {
+                    case MotionEvent.ACTION_UP  :
+                        Log.d("MotionEvent","Action up");
+
+                        break;
+                    case MotionEvent.ACTION_DOWN :
+                        Log.d("MotionEvent","Action down");
+                        xcor = event.getX();
+                        break;
+                    case MotionEvent.ACTION_MOVE:
+                        if(xcor-event.getX()>2)
+                        {
+                            ObjectAnimator.ofFloat(albumart,"translationX", -100).setDuration(200).start();
+                        }
+                        if((xcor-event.getX())<2)
+                        {
+                            ObjectAnimator.ofFloat(albumart,"translationX", 0).setDuration(200).start();
+                        }
+
+
+                }
                 return true;
             }
-        });
-          /*  albumart.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if(c%2==0) {
-                        moving.setTranslationY(50f);
-                        moving.setAlpha(0f);
-                        moving.setVisibility(View.VISIBLE);
-                        moving.animate()
-                                .setDuration(500)
-                                .alpha(0.6f)
-                                .translationY(0f)
-                                .start();
-                        c++;
-                    }
-                    else
-                    {
-                        moving.setVisibility(View.INVISIBLE);
-                        c++;
-                    }
-                }
-            });
-            */
+        });*/
             play.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -363,8 +359,9 @@ public class MusicPlayerActivity extends Activity{
             next.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    music.playnext();
+                    music.playnext(true);
                     currentsong = music.getCurrentsong();
+                    viewPager.setCurrentItem(viewPager.getCurrentItem()+1);
                 }
             });
 
@@ -373,6 +370,8 @@ public class MusicPlayerActivity extends Activity{
                 public void onClick(View v) {
                     music.playprev();
                     currentsong = music.getCurrentsong();
+                    viewPager.setCurrentItem(viewPager.getCurrentItem()-1);
+
                 }
             });
 
@@ -382,8 +381,9 @@ public class MusicPlayerActivity extends Activity{
                 int du=(int) currentsong.getDuration();
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-               ct=music.getcurrentpositionofsongtime();
-               position =i;
+                int t = (i*(int)music.Current_playing_song.getDuration())/1000;
+                music.seekmediaplayer(t);
+                current_time.setText(gettimeinformat(t));
             }
 
 
@@ -394,25 +394,32 @@ public class MusicPlayerActivity extends Activity{
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
             //   Log.d("in","Stop tracking touch");
-                ct= music.getcurrentpositionofsongtime();
-            //    Log.d("","Current position->>>>"+position);
-                int ford = position*(du/100);
+               /* ct= music.getcurrentpositionofsongtime();
+                Log.d("","Current position->>>>"+position);
+                int d =(int) music.Current_playing_song.getDuration();
+                int ford = position*(d/100);
+                Log.d("du = ",""+du+" d="+d);
+                Log.d("position = ",""+position);
                 current_time.setText( gettimeinformat(ct));
-                music.seekmediaplayer(ford);
+                music.seekmediaplayer(ford);*/
             }
         });
 
         //   updateyourself(music.Current_playing_song);
     }
 
-    public void updateyourself(Songs now)
-    {   float time;
+    public void updateyourself()
+    {
+       // startImageZoomAnimation();
+        float time;
         Log.d("mystatus",""+isactivityisrenning);
-        this.currentsong = now;
+        currentsong = music.Current_playing_song;
+        Songs now = currentsong;
         currentsongposition =now.getPosition();
-        int max= (int) currentsong.getDuration()/100;
-        seekBar.setMax(100);
+        int fraction=(int)  currentsong.getPosition()/(int)currentsong.getDuration();
+        seekBar.setProgress(fraction);
         total.setText(gettimeinformat((int) now.getDuration()));
+        current_time.setText(gettimeinformat(music.Current_playing_song.getPosition()));
         Log.d("is song is playing", now.getDuration()+"");
         if(music.isplaying())
             play.setImageResource(android.R.drawable.ic_media_pause);
@@ -426,19 +433,23 @@ public class MusicPlayerActivity extends Activity{
             data.setDataSource(this,currentsong.getSonguri());
             a = data.getEmbeddedPicture();
             image = BitmapFactory.decodeByteArray(a, 0, a.length);
-            albumart.setImageBitmap(image);
+           // albumart.setImageBitmap(image);
+            setBlurBackdround(image);
            // updatePlayerBar(image);
 
         }
         catch (IllegalArgumentException e)
         {
-            loader = new songDetailloader(context);
+            loader = new SongDetailLoader(context);
             String s =loader.albumartwithalbum(currentsong.getalbum());
-            if(s!=null)
-                albumart.setImageBitmap(BitmapFactory.decodeFile(s));
+            if(s!=null) {
+                Bitmap b = BitmapFactory.decodeFile(s);
+              //  albumart.setImageBitmap(b);
+                setBlurBackdround(b);
+            }
             else
             {
-                albumart.setImageResource(R.drawable.default_track_light);
+               // albumart.setImageResource(R.drawable.default_track_light);
             }
             Log.d("SET", "Exeption occur in imagesetting");
 
@@ -459,31 +470,34 @@ public class MusicPlayerActivity extends Activity{
             name.setText("unknown title");
             album.setText("unknown artist - album");
         }
-        time=music.getcurrentpositionofsongtime();
-        int t=0;
-        if(max!=0) {
-             t = (int) time / max;
-        }
-        current_time.setText(gettimeinformat((int)time));
-        seekBar.setProgress(t);
-        seek_max = max ;
+
       //  seekUpdation(max);
-
-
+        //Color update...
 
     }
 
-    public String gettimeinformat(int a)
+    public void setBlurBackdround(Bitmap bitmap)
     {
-        String s;
-        String st;
-        int min = (a/1000)/60;
-        int sec = (a/1000)-(min*60);
-        if(sec<=9)
-            return ""+min+":"+"0"+sec;
-        else
-            return  ""+min+":"+sec;
+     //   updatePlayerBar(bitmap);
+        try {
+            Blurry.with(context).radius(4)
+                    .sampling(5).color(Color.argb(0, 256, 256, 0))
+                    .async()
+                    .animate(200).from(bitmap).into(background);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
 
+    public String gettimeinformat(long a)
+    {
+        long second = (a / 1000) % 60;
+        long minute = (a / (1000 * 60)) % 60;
+
+        String time = String.format("%02d:%02d", minute, second);
+        return time;
 
     }
 
@@ -497,12 +511,63 @@ public class MusicPlayerActivity extends Activity{
                     // Set the background color of the player bar based on the swatch color
                     // Update the track's title with the proper title text color
                     // Update the artist name with the proper body text color
-                    relativeLayout.setBackgroundColor(palette.getDominantColor(Color.BLACK));
+                  //  name.setTextColor(palette.getDarkVibrantColor(Color.WHITE));
+                 //   album.setTextColor(palette.getMutedColor(Color.WHITE));
                 }
             }
         });
     }
 
+    public void startImageZoomAnimation()
+    {
+       try {
+           zoomin = AnimationUtils.loadAnimation(this, R.anim.zoomin);
+           zoomout = AnimationUtils.loadAnimation(this, R.anim.zoomout);
+           zoomin.setAnimationListener(new Animation.AnimationListener() {
+               @Override
+               public void onAnimationStart(Animation animation) {
+
+               }
+
+               @Override
+               public void onAnimationEnd(Animation animation) {
+                   startImageZoomAnimation();
+               }
+
+               @Override
+               public void onAnimationRepeat(Animation animation) {
+
+               }
+           });
+           zoomout.setAnimationListener(new Animation.AnimationListener() {
+               @Override
+               public void onAnimationStart(Animation animation) {
+
+               }
+
+               @Override
+               public void onAnimationEnd(Animation animation) {
+                   startImageZoomAnimation();
+               }
+
+               @Override
+               public void onAnimationRepeat(Animation animation) {
+
+               }
+           });
+           if (zoomingin) {
+             //  albumart.setAnimation(zoomout);
+               zoomingin = false;
+           } else {
+             //  albumart.setAnimation(zoomin);
+               zoomingin = true;
+           }
+       }
+       catch (Exception e)
+       {
+           e.printStackTrace();
+       }
+    }
 
 
 
@@ -516,8 +581,6 @@ public class MusicPlayerActivity extends Activity{
         final RenderScript renderScript = RenderScript.create(this);
         Allocation tmpIn = Allocation.createFromBitmap(renderScript, image);
         Allocation tmpOut = Allocation.createFromBitmap(renderScript, outputBitmap);
-
-        //Intrinsic Gausian blur filter
         ScriptIntrinsicBlur theIntrinsic = ScriptIntrinsicBlur.create(renderScript, Element.U8_4(renderScript));
         theIntrinsic.setRadius(BLUR_RADIUS);
         theIntrinsic.setInput(tmpIn);
@@ -581,7 +644,7 @@ public class MusicPlayerActivity extends Activity{
         super.onRestart();
         Log.d("activity","restarted");
         isactivityisrenning = true;
-        updateyourself(music.Current_playing_song);
+        updateyourself();
 
     }
 
@@ -641,45 +704,6 @@ public class MusicPlayerActivity extends Activity{
 
     }
 
-      public class insertintoplaylist extends AsyncTask<Void,Void,Void>
-    {
-        Songs s = new Songs();
-        ArrayList<Songs> songs = new ArrayList<>();
-        Context context;
-        String playlistname ;
-        int flag=0;
-        public insertintoplaylist(Context context ,Songs s ,String playlistname) {
-            super();
-            this.context = context;
-            this.s=s;
-            this.playlistname = playlistname;
-        }
-
-        @Override
-        protected Void doInBackground(Void... params) {
-            Log.d("here1","  ");
-            DataBaseClass db = new DataBaseClass(context);
-            songs = db.getfromplaylist(playlistname);
-            if(!songs.contains(s)) {
-                Log.d("here","  ");
-                db.insertintoplaylist(s, playlistname);
-            }
-            else
-            {
-                flag=1;
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            if(flag == 1)
-            {
-                Toast.makeText(context,"Song already exist in playlist",Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
 
 }
 

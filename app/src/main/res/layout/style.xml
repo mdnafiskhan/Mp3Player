@@ -1,14 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TextView xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="wrap_content"
+    android:layout_width="match_parent"
+    android:orientation="vertical"
+    >
+<TextView
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:textAppearance="?android:attr/textAppearanceSmall"
     android:textSize="18sp"
     android:paddingLeft="15dp"
     android:paddingBottom="15dp"
+    android:text="playlist"
     android:paddingTop="15dp"
     android:id="@+id/textView"
+    android:textColor="#aaaaaa"
     android:gravity="left"
-    android:textStyle="bold"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    tools:textColor="@android:color/holo_red_light" />
+ />
+</LinearLayout>

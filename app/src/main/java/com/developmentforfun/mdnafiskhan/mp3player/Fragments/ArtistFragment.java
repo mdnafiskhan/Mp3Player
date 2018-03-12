@@ -56,6 +56,9 @@ public class ArtistFragment extends Fragment {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
+            recyclerView.setAdapter(new ArtistRecyclerView(getActivity(),aa));
+            recyclerView.setLayoutManager(new LinearLayoutManager(getActivity().getBaseContext()));
+            recyclerView.setItemAnimator(new SlideInLeftAnimator());
         }
 
         @Override
@@ -67,9 +70,7 @@ public class ArtistFragment extends Fragment {
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-            recyclerView.setAdapter(new ArtistRecyclerView(getActivity(),aa));
-            recyclerView.setLayoutManager(new LinearLayoutManager(getActivity().getBaseContext()));
-            recyclerView.setItemAnimator(new SlideInLeftAnimator());
+            recyclerView.getAdapter().notifyDataSetChanged();
         }
     }
 

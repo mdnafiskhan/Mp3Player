@@ -17,6 +17,8 @@ public class Songs {
     long Duration;
     String albumart;
     String artist;
+    String albumId;
+    String songId;
 
     public void setSonguri( Uri songuri)
     {
@@ -45,13 +47,53 @@ public class Songs {
       this.Duration = duration;
     }
 
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getAlbum() {
+        return album;
+    }
+
+    public void setAlbum(String album) {
+        this.album = album;
+    }
+
+    public String getArtist() {
+        return artist;
+    }
+
+    public void setArtist(String artist) {
+        this.artist = artist;
+    }
+
+    public String getSongId() {
+        return songId;
+    }
+
+    public void setSongId(String songId) {
+        this.songId = songId;
+    }
+
     public void setartist(String artist)
     {
       this.artist = artist;
 
     }
 
-   public void setAlbumart(String albumart)
+    public String getAlbumId() {
+        return albumId;
+    }
+
+    public void setAlbumId(String albumId) {
+        this.albumId = albumId;
+    }
+
+    public void setAlbumart(String albumart)
    {
        this.albumart = albumart;
    }

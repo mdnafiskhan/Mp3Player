@@ -5,19 +5,15 @@
     android:background="#000000"
     android:layout_height="match_parent">
 
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:id="@+id/artistimage"
-        android:src="@mipmap/artist"
-        android:scaleType="center"
-        android:layout_weight="2"/>
 
-    <ListView
+
+    <android.support.v7.widget.RecyclerView
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="match_parent"
         android:id="@+id/artistlistview"
-        android:layout_weight="4.37">
+        android:paddingBottom="100dp"
+        android:clipToPadding="false"
+        >
 
-    </ListView>
+    </android.support.v7.widget.RecyclerView>
 </LinearLayout>

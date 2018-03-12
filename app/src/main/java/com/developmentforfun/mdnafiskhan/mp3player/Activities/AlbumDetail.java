@@ -5,15 +5,10 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.media.Image;
-import android.media.MediaMetadataRetriever;
 import android.media.MediaPlayer;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -24,8 +19,7 @@ import android.widget.TextView;
 import com.developmentforfun.mdnafiskhan.mp3player.Models.Songs;
 import com.developmentforfun.mdnafiskhan.mp3player.R;
 import com.developmentforfun.mdnafiskhan.mp3player.Service.MusicService;
-import com.developmentforfun.mdnafiskhan.mp3player.SongLoader.songDetailloader;
-import com.developmentforfun.mdnafiskhan.mp3player.customAdapters.ListViewAdapter;
+import com.developmentforfun.mdnafiskhan.mp3player.SongLoader.SongDetailLoader;
 import com.developmentforfun.mdnafiskhan.mp3player.customAdapters.albumdetailadapter;
 
 import java.util.ArrayList;
@@ -43,9 +37,14 @@ public class AlbumDetail extends Activity{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().getDecorView().setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                        | View.SYSTEM_UI_FLAG_FULLSCREEN
+                        | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
         setContentView(R.layout.albumdetail);
         Bundle b= getIntent().getExtras();
-        songDetailloader loader = new songDetailloader(getBaseContext());
+        SongDetailLoader loader = new SongDetailLoader(getBaseContext());
         String album =(String) b.getCharSequence("album","ALBUM");
        // final int pos = loader.getpositionofalbumwithalbum(album);
         Log.d("recived","Album name forn d "+album);
@@ -53,7 +52,7 @@ public class AlbumDetail extends Activity{
         ImageView albumimage =  (ImageView) findViewById(R.id.albumart);
         TextView albumname = (TextView) findViewById(R.id.albumname);
         ListView listView = (ListView) findViewById(R.id.listView);
-        give = loader.getSongs("album",album);
+        give = loader.getSongs("album",album,getBaseContext());
         albumdetailadapter albumdetailadapter = new albumdetailadapter(this,give);
         listView.setAdapter(albumdetailadapter);
         Intent i = new Intent(this,MusicService.class);

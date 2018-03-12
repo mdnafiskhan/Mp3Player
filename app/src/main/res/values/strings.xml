@@ -5,4 +5,16 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="action_settings">Settings</string>
+    <string name="title_activity_scrolling__album_">Scrolling_Album_Activity</string>
+    <string name="large_text">
+        "Material is the metaphor.\n\n"
+        cts move, "
+        "interact, and exist in space and in relation to each other. Realistic lighting shows "
+       ckbar appears.\n"
+        "On the layout level, design your app layout to minimize opportunities for interference. "
+        "For example, position the FAB to one side of stream of a cards so the FAB won’t interfere "
+        "when a user tries to pick up one of cards.\n\n"
+    </string>
+    <string name="title_activity_artist_">Artist_Activity</string>
+    <string name="section_format">Hello World from section: %1$d</string>
 </resources>

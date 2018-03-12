@@ -1,11 +1,33 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">#000000</item>
-        <item name="colorPrimaryDark">#000000</item>
-        <item name="colorAccent">#000000</item>
+        <item name="colorPrimary">#cccccc</item>
+        <item name="colorPrimaryDark">#191919</item>
+        <item name="colorAccent">#ffffff</item>
+        <item name="android:textColorPrimary">#ffffff</item>
+    </style>
+
+    <style name="AppTheme2" parent="android:Theme.Holo.Light.Dialog">
+        <item name="colorPrimary">#cccccc</item>
+        <item name="colorPrimaryDark">#ffffff</item>
+        <item name="colorAccent">#ffffff</item>
+        <item name="android:textColorPrimary">#ffffff</item>
+    </style>
+
+    <style name="SwitchCompatStyle" >
+        <item name="thumbTint">@color/switch_color</item>
+        <item name="trackTint">@color/switch_color</item>
+    </style>
+
+    <style name="AlbumTheme" parent="android:Theme.Holo.Light.Dialog">
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowTranslucentNavigation">true</item>
+        <item name="colorPrimary">@android:color/transparent</item>
+        <item name="colorPrimaryDark">@android:color/transparent</item>
+        <item name="colorAccent">@android:color/transparent</item>
+        <item name="android:textColorPrimary">#00D1C4E9</item>
     </style>
 
     <style name="AppTheme.NoActionBar">
@@ -32,6 +54,12 @@
         <item name="android:background">#4CAF50</item>
     </style>
 
+
+    <style name="Spinner" parent="Widget.AppCompat.Spinner">
+        <item name="backgroundTint">#cccccc</item>
+        <item name="overlapAnchor">true</item>
+        <item name="background">@drawable/spinner_background</item>
+    </style>
 
 
 </resources>
