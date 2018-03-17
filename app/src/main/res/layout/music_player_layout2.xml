@@ -36,6 +36,7 @@
         android:id="@+id/constraintLayout"
         app:layout_constraintTop_toTopOf="parent"
         android:layout_marginTop="8dp"
+        android:animateLayoutChanges="true"
         app:layout_constraintHorizontal_bias="0.0">
      <TextView
          android:layout_width="0dp"

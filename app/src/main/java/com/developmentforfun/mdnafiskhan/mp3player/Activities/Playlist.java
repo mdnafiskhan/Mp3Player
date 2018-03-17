@@ -1,7 +1,5 @@
 package com.developmentforfun.mdnafiskhan.mp3player.Activities;
 
-import android.app.Activity;
-import android.app.FragmentTransaction;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -20,11 +18,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
-import android.view.Window;
-import android.widget.AdapterView;
 import android.widget.ImageView;
-import android.widget.ListView;
-import android.widget.TextView;
 
 import com.developmentforfun.mdnafiskhan.mp3player.DataBase.DataBaseClass;
 import com.developmentforfun.mdnafiskhan.mp3player.Fragments.SongChooserFragment;
@@ -33,7 +27,6 @@ import com.developmentforfun.mdnafiskhan.mp3player.R;
 import com.developmentforfun.mdnafiskhan.mp3player.Service.MusicService;
 import com.developmentforfun.mdnafiskhan.mp3player.SongLoader.SongDetailLoader;
 import com.developmentforfun.mdnafiskhan.mp3player.customAdapters.CustomRecyclerViewAdapter;
-import com.developmentforfun.mdnafiskhan.mp3player.customAdapters.SongfullistViewAdapter;
 
 import java.util.ArrayList;
 

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.developmentforfun.mdnafiskhan.mp3player">
+    package="com.developmentforfun.mdnafiskhan.mp3player"
+   >
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -15,6 +16,7 @@
         android:label="@string/app_name"
         android:largeHeap="true"
         android:supportsRtl="true"
+        android:name=".Mp3PlayerApplication"
         android:theme="@style/AppTheme">
         <activity
             android:name=".Activities.MainActivity"
@@ -23,7 +25,7 @@
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -61,18 +63,6 @@
                     android:mimeType="audio/mp3"
                     android:scheme="audio" />
             </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-                <category android:name="android.intent.category.APP_MUSIC" />
-
-                <data
-                    android:mimeType="audio/*"
-                    android:pathPattern=".*mp3"
-                    android:scheme="http" />
-            </intent-filter>
         </activity>
         <activity
             android:name=".Activities.AlbumDetail"
@@ -81,6 +71,14 @@
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".Activities.SplashActivity"
+            android:theme="@style/AppTheme">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
@@ -143,7 +141,7 @@
         <activity
             android:name=".Activities.Scrolling_Album_Activity"
             android:label="@string/title_activity_scrolling__album_"
-            android:theme="@style/AlbumTheme" />
+            android:theme="@style/AppTheme" />
         <activity
             android:name=".Activities.Artist_Activity"
             android:label="@string/title_activity_artist_"
@@ -151,7 +149,7 @@
         <activity
             android:name=".Activities.Genre_Activity"
             android:theme="@style/AppTheme" />
-        <activity android:name=".Activities.NowPlaying_Activity"
+        <activity android:name=".Activities.ActivityFragments.NowPlayingSongList_Fragment"
             android:theme="@style/AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

@@ -9,6 +9,7 @@ public class Artists {
     private int nofosongs ;
     private int noalbums;
     private String artistname ;
+    private String artistId;
 
     public int getNofosongs() {
         return nofosongs;
@@ -33,4 +34,13 @@ public class Artists {
     public void setNoalbums(int noalbums) {
         this.noalbums = noalbums;
     }
+
+    public String getArtistId() {
+        return artistId;
+    }
+
+    public void setArtistId(String artistId) {
+        this.artistId = artistId;
+    }
 }
+

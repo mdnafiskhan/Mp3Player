@@ -6,10 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
-import android.os.AsyncTask;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.provider.MediaStore;
@@ -17,25 +14,26 @@ import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.util.SparseBooleanArray;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.developmentforfun.mdnafiskhan.mp3player.Activities.AlbumDetail;
-import com.developmentforfun.mdnafiskhan.mp3player.Activities.ArtistActivity;
 import com.developmentforfun.mdnafiskhan.mp3player.Activities.Artist_Activity;
 import com.developmentforfun.mdnafiskhan.mp3player.Activities.Scrolling_Album_Activity;
 import com.developmentforfun.mdnafiskhan.mp3player.DataBase.DataBaseClass;
-import com.developmentforfun.mdnafiskhan.mp3player.Fragments.TracksFragment;
+import com.developmentforfun.mdnafiskhan.mp3player.Interface.SelectorChangeInterface;
+import com.developmentforfun.mdnafiskhan.mp3player.Interface.SetItemSelect;
 import com.developmentforfun.mdnafiskhan.mp3player.Models.Playlist;
 import com.developmentforfun.mdnafiskhan.mp3player.Models.Songs;
+import com.developmentforfun.mdnafiskhan.mp3player.Mp3PlayerApplication;
 import com.developmentforfun.mdnafiskhan.mp3player.R;
 import com.developmentforfun.mdnafiskhan.mp3player.Service.MusicService;
 import com.developmentforfun.mdnafiskhan.mp3player.SongLoader.SongDetailLoader;
@@ -44,8 +42,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Random;
 
-import de.hdodenhof.circleimageview.CircleImageView;
-
 /**
  * Created by mdnafiskhan on 26/06/2017.
  */
@@ -53,15 +49,18 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class CustomRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     Context context;
-    ArrayList<Songs> songs = new ArrayList<>();
-    LayoutInflater layoutInflater;
+    public static ArrayList<Songs> songs = new ArrayList<>();
+    static LayoutInflater layoutInflater;
     MusicService musicService;
     boolean mBound = false;
-    SongDetailLoader loader = new SongDetailLoader();
     AlertDialog dis;
     ArrayList<Songs> shufflePlayList = new ArrayList<>();
+    public static int currentPos=-1;
+    Mp3PlayerApplication mp3PlayerApplication;
 
-
+    public CustomRecyclerViewAdapter() {
+        super();
+    }
 
     public CustomRecyclerViewAdapter(Context context , ArrayList<Songs> songs) {
         super();
@@ -76,13 +75,6 @@ public class CustomRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
              {
                  e.printStackTrace();
              }
-        try {
-            loader.set(context);
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
     }
 
     @Override
@@ -106,9 +98,18 @@ public class CustomRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
             return 1;
     }
 
+    @Override
+    public void setHasStableIds(boolean hasStableIds) {
+        super.setHasStableIds(hasStableIds);
+    }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder,int position) {
+    public long getItemId(int position) {
+        return super.getItemId(position);
+    }
+
+    @Override
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
              Log.d("sizze od list",""+songs.size());
              if(holder.getItemViewType()>0) {
                  ViewHolder holder2 = (ViewHolder) holder;
@@ -118,12 +119,15 @@ public class CustomRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
                      holder2.songname.setText(songs.get(position - 1).gettitle());
                      holder2.albumname.setText(songs.get(position - 1).getalbum());
                      holder2.duration.setText(time(songs.get(position - 1).getDuration()));
+
                  } else {
                      holder2.songname.setText("No song available");
                      holder2.albumname.setText("");
                      holder2.duration.setText("");
                  }
+
              }
+
     }
 
     @Override
@@ -156,8 +160,11 @@ public class CustomRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
        notifyItemRemoved(pos);
     }
 
+
+
     public class ViewHolder0 extends RecyclerView.ViewHolder{
         ConstraintLayout constraintLayout;
+
         public ViewHolder0(View itemView) {
             super(itemView);
             constraintLayout = (ConstraintLayout) itemView.findViewById(R.id.shuffleCons);
@@ -172,6 +179,8 @@ public class CustomRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
                 }
             });
         }
+
+
     }
 
     public static void shuffleList(ArrayList<Songs> songses) {
@@ -191,11 +200,14 @@ public class CustomRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
     }
 
 
-    public class ViewHolder extends RecyclerView.ViewHolder{
+    public class ViewHolder extends RecyclerView.ViewHolder {
         TextView songname;
         TextView albumname;
         TextView duration ;
         ConstraintLayout constraintLayout;
+
+
+
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -206,7 +218,7 @@ public class CustomRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
             constraintLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-
+                 //   v.setBackgroundColor(Color.parseColor("#aaccdd"));
                     Log.d("Uri of ", "" + songs.get(getAdapterPosition()-1).getSonguri());
                     musicService.setplaylist(songs,getAdapterPosition()-1);
                     musicService.setMediaPlayer();
@@ -508,6 +520,7 @@ public class CustomRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
     @Override
     public void onDetachedFromRecyclerView(RecyclerView recyclerView) {
         super.onDetachedFromRecyclerView(recyclerView);
+        Log.d("msg","detached from recycler view");
     }
 
 

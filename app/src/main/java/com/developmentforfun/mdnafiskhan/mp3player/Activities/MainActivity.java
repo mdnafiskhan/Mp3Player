@@ -1,18 +1,18 @@
 package com.developmentforfun.mdnafiskhan.mp3player.Activities;
 
-import android.animation.Animator;
-import android.animation.ObjectAnimator;
 import android.app.ActivityOptions;
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.databinding.DataBindingUtil;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
@@ -21,17 +21,16 @@ import android.graphics.RectF;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.IBinder;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.PagerAdapter;
@@ -41,6 +40,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.transition.TransitionInflater;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
@@ -50,14 +50,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.widget.AdapterView;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 
-import com.android.volley.Request;
-import com.developmentforfun.mdnafiskhan.mp3player.CustomView.CircleImage;
+import com.developmentforfun.mdnafiskhan.mp3player.Activities.ActivityFragments.AlbumDetailFragment;
+import com.developmentforfun.mdnafiskhan.mp3player.Activities.ActivityFragments.NavigationControler;
+import com.developmentforfun.mdnafiskhan.mp3player.Activities.ActivityViewModel.MainActivityViewModel;
+import com.developmentforfun.mdnafiskhan.mp3player.ApplicationModelClass;
 import com.developmentforfun.mdnafiskhan.mp3player.Fragments.AlbumFragment;
 import com.developmentforfun.mdnafiskhan.mp3player.Fragments.ArtistFragment;
 import com.developmentforfun.mdnafiskhan.mp3player.Fragments.FavFragment;
@@ -73,11 +72,11 @@ import com.developmentforfun.mdnafiskhan.mp3player.Models.Artists;
 import com.developmentforfun.mdnafiskhan.mp3player.Models.Genre;
 import com.developmentforfun.mdnafiskhan.mp3player.Models.SearchedContent;
 import com.developmentforfun.mdnafiskhan.mp3player.Models.Songs;
+import com.developmentforfun.mdnafiskhan.mp3player.Mp3PlayerApplication;
 import com.developmentforfun.mdnafiskhan.mp3player.R;
 import com.developmentforfun.mdnafiskhan.mp3player.Service.MusicService;
 import com.developmentforfun.mdnafiskhan.mp3player.SongLoader.SongDetailLoader;
 import com.developmentforfun.mdnafiskhan.mp3player.customAdapters.CustomSearchRecycler;
-import com.developmentforfun.mdnafiskhan.mp3player.customAdapters.NavigationDrawerAdapter;
 import com.ogaclejapan.smarttablayout.SmartTabLayout;
 
 import java.util.ArrayList;
@@ -85,14 +84,17 @@ import java.util.ArrayList;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
+    private MainActivityViewModel mainActivityViewModel;
     private String[] mPlanetTitles={"Tracks","Album","Artist","Genre","Folders","Playlist"};
     private String[] mPlanetTitles2={"MostPlayed","Favorites","Playlist"};
-    private DrawerLayout drawer;
+    static public DrawerLayout drawer;
     SharedPreferences sharedPreferences;
     public static ImageView nowPlayingImage;
     public static TextView nowPlaintName;
     public OnBackPress onBackPress;
     Cursor cursor;
+    static Observer<Songs> songChangedObserver;
+    static Observer<Boolean> fragmentRequestObserver;
     Fragment [] fragments = {new TracksFragment(),new AlbumFragment(), new ArtistFragment(),new GenresFragment(),new FolderFragment(),new Playlists()};
     Fragment [] fragments2 = {new MostPlayedFragment(),new FavFragment(), new Playlists()};
     int which =0;
@@ -122,6 +124,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     CustomSearchRecycler customSearchRecycler;
        protected void onCreate(final Bundle savedInstanceState) {
            super.onCreate(savedInstanceState);
+           Log.d("msg","main activity is created");
            setContentView(R.layout.activity_main);
            Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
            if (toolbar != null) {
@@ -129,7 +132,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
                toolbar.setNavigationIcon(R.drawable.nav);
            }
-
+           mainActivityViewModel = ViewModelProviders.of(this).get(MainActivityViewModel.class);
+           subscribe();
            sharedPreferences = getSharedPreferences("lastplayed",Context.MODE_PRIVATE);
            Intent i = new Intent(MainActivity.this,MusicService.class);
            startService(i);
@@ -140,7 +144,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                    this, drawer, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
            drawer.setDrawerListener(toggle);
            toggle.syncState();
-
            loader  = new SongDetailLoader(getBaseContext());
            tabLayout = (SmartTabLayout) findViewById(R.id.tablayout);
            viewPager = (ViewPager) findViewById(R.id.viewPager);
@@ -174,11 +177,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
           @Override
           public void onClick(View v) {
 
-              Intent intent = new Intent(MainActivity.this, PlayerActivity.class);
+             /* Intent intent = new Intent(MainActivity.this, PlayerActivity.class);
               intent.setData(currentsonguri);
               intent.putExtra("flag",1);
-              ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(MainActivity.this, im, "zoom");
-              startActivity(intent,options.toBundle());
+              */
+              NavigationControler.navigateToPlayerFragment(getSupportFragmentManager(),im);
+
+
           }
 
           });
@@ -186,7 +191,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                Log.d("searching song","Current playing  song is null");
                new allsongs(getBaseContext(), currentsonguri).execute();
            }
-
+          init();
         /*
            final Uri r= getIntent().getData();
               if(r!=null) {
@@ -221,6 +226,53 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         });
            }
+
+    public void init()
+    {
+        if(!sharedPreferences.getString("uri","").equals(""))
+        {
+            String s = sharedPreferences.getString("uri","");
+            if(!s.isEmpty()) {
+                Uri u = Uri.parse(s);
+                currentsonguri = u;
+                new SetImage( u ,null,0,im).execute();
+            }
+        }
+    }
+
+    private void subscribe() {
+         songChangedObserver = new Observer<Songs>() {
+            @Override
+            public void onChanged(@Nullable final Songs songs) {
+                if(songs!=null)
+                {
+                    if(songs.getAlbumart()!=null)
+                    {
+                        Log.d("msg","in a main activity observer oberving the song changes"+songs.getAlbumart());
+                        new SetImage(null,songs.getAlbumart(),1,im).execute();
+                    }
+                }
+                else if(!sharedPreferences.getString("uri","").equals(""))
+                {
+                    String s = sharedPreferences.getString("uri","");
+                    if(!s.isEmpty()) {
+                        Uri u = Uri.parse(s);
+                        currentsonguri = u;
+                        new SetImage( u ,Mp3PlayerApplication.applicationModelClass.CurrentPlayingSong.getAlbumart(),0,im).execute();
+                    }
+                }
+                else
+                {
+
+                }
+                Log.d("msg","observers is called in main activity");
+            }
+        };
+
+        mainActivityViewModel.getNowPlaying().observe(this, songChangedObserver);
+        Log.d("msg","subscriber is set in main activity");
+
+    }
 
 
     @Override
@@ -342,39 +394,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
-    public void setview(byte [] b, int position,Uri uri,String name)
+    public void setview(Bitmap bitmap)
     {
-
-        currentsonguri = uri;
-        Bitmap bitmap;
-        Log.d("position in set view",""+position);
-        Log.d("fail","i am here");
         if(im!=null)
         {
-            if(b!=null)
-            {
-                 bitmap = BitmapFactory.decodeByteArray(b, 0, b.length);
-                im.setImageBitmap(bitmap);
-            }
-            else {
-                bitmap=null;
-            }
-           /* try {
-                bitmap = getRoundedCornerBitmap(bitmap);
-            }
-            catch (Exception e)
-            {
-                Log.d("bitmap error","round bitmap is null");
-            }*/
                 if (bitmap != null) {
                     im.setImageBitmap(bitmap);
                     nowPlayingImage.setImageBitmap(bitmap);
-                    nowPlaintName.setText(""+name);
+                    nowPlaintName.setText(""+Mp3PlayerApplication.applicationModelClass.CurrentPlayingSong.getTitle());
                 } else {
                     im.setImageResource(R.drawable.default_track_light);
                     Log.d("ic","ic_launcher setted");
                 }
-            }
+        }
     }
 
 
@@ -410,7 +442,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             artistses = SongHelper.getArtist(getBaseContext(),"%"+what+"%");
             genres  = SongHelper.getGenres(getBaseContext(),"%"+what+"%");
             albumses = SongHelper.getAlbums(getBaseContext(),"%"+what+"%");
-            Log.d("genre","......");
+            /*Log.d("genre","......");
             for(int i=0;i<genres.size();i++)
                 Log.d(""+i,""+genres.get(i).getNameGenre()+"");
             Log.d("songs","......");
@@ -421,7 +453,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 Log.d(""+i,""+artistses.get(i).getArtistname()+"");
             Log.d("albums","......");
             for(int i=0;i<albumses.size();i++)
-                Log.d(""+i,""+albumses.get(i).getAlbumName()+"");
+                Log.d(""+i,""+albumses.get(i).getAlbumName()+"");*/
             searchedContent = new SearchedContent(songses,artistses,albumses,genres);
             return null;
         }
@@ -534,61 +566,28 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Log.d("MainActivity","Get distoryed");
+        Log.d("msg","main activity is destroyed");
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        Log.d("msg","main activity is onResume");
         Intent i = new Intent(this,MusicService.class);
         bindService(i, serviceConnection, Context.BIND_AUTO_CREATE);
-        editor= sharedPreferences.edit();
-        if(sharedPreferences.getInt("count",0)==0)
-        {
-            editor.putInt("count",1);
-        }
-        else
-        {
-            int c= sharedPreferences.getInt("count",0);
-            Log.d("Uses count",c+"");
-            editor.putInt("count",c++);
-            editor.apply();
-        }
-        if(!sharedPreferences.getString("uri","").equals(""))
-        {
-            String s = sharedPreferences.getString("uri","");
-            if(!s.isEmpty()) {
-                Uri u = Uri.parse(s);
-                currentsonguri = u;
-                MediaMetadataRetriever data = new MediaMetadataRetriever();
-                try {
-                    data.setDataSource(MainActivity.this, u);
-                    byte[] b = data.getEmbeddedPicture();
-                    Bitmap bitmap = BitmapFactory.decodeByteArray(b, 0, b.length);
-                    //   bitmap = getRoundedCornerBitmap(bitmap);
-                    im.setImageBitmap(bitmap);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-        else
-        {
-
-        }
-        editor.apply();
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-
+        Log.d("msg","main activity is started");
     }
 
 
     @Override
     protected void onStop() {
         super.onStop();
+        Log.d("msg","main activity is stoped");
         if(customSearchRecycler!=null) {
             customSearchRecycler.unbindService();
         }
@@ -605,7 +604,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public void onBackPressed() {
-        Log.d("onBackPress","true");
+        Log.d("msg","onBackPressed");
         if(onBackPress!=null) {
           if (onBackPress.pressed()) {
               super.onBackPressed();
@@ -613,7 +612,78 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
       }
       else
       {
-          super.onBackPressed();
+          Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
+          if(fragment!=null)
+          {
+              getSupportFragmentManager().beginTransaction().remove(fragment).commit();
+          }
+          else
+          {
+              super.onBackPressed();
+          }
       }
+      //  new SetImage(null,Mp3PlayerApplication.applicationModelClass.CurrentPlayingSong.getAlbumart(),1,im).execute();
     }
+
+    public class SetImage extends AsyncTask<Void,Void,Void>
+    {
+        Uri uri;
+        String imagePath;
+        int what;
+        ImageView imageView;
+        Bitmap bitmap;
+        public SetImage(Uri uri,String imagePath,int what,ImageView imageView) {
+            super();
+            this.imagePath=imagePath;
+            this.uri=  uri;
+            this.what = what;
+            this.imageView = imageView;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            if(bitmap!=null)
+            {
+                setview(bitmap);
+
+                Log.d("bitmap","bitmap is set");
+
+            }
+            else
+            {
+                Log.d("bitmap","bitmap is null");
+            }
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+           Log.d("int setImage","what = "+what);
+            if(what == 0)
+            {
+                MediaMetadataRetriever data = new MediaMetadataRetriever();
+                try {
+                    data.setDataSource(MainActivity.this, uri);
+                    byte[] b = data.getEmbeddedPicture();
+                    this.bitmap = BitmapFactory.decodeByteArray(b, 0, b.length);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            else if(what == 1)
+            {
+                Log.d("msg","image path ="+imagePath);
+                this.bitmap  = BitmapFactory.decodeFile(imagePath);
+            }
+
+            return null;
+        }
+    }
+
+
 }

@@ -1,5 +1,7 @@
 package com.developmentforfun.mdnafiskhan.mp3player.Fragments;
 
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -22,16 +24,19 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.developmentforfun.mdnafiskhan.mp3player.Activities.ActivityViewModel.MainActivityViewModel;
+import com.developmentforfun.mdnafiskhan.mp3player.Activities.MainActivity;
 import com.developmentforfun.mdnafiskhan.mp3player.DataBase.DataBaseClass;
 import com.developmentforfun.mdnafiskhan.mp3player.Models.Songs;
+import com.developmentforfun.mdnafiskhan.mp3player.Mp3PlayerApplication;
 import com.developmentforfun.mdnafiskhan.mp3player.R;
 import com.developmentforfun.mdnafiskhan.mp3player.Service.MusicService;
 import com.developmentforfun.mdnafiskhan.mp3player.SongLoader.SongDetailLoader;
+import com.developmentforfun.mdnafiskhan.mp3player.customAdapters.CustomLinearLayoutManager;
 import com.developmentforfun.mdnafiskhan.mp3player.customAdapters.CustomRecyclerViewAdapter;
+import com.developmentforfun.mdnafiskhan.mp3player.customAdapters.CustomRecyclerViewAdapter1;
 
 import java.util.ArrayList;
-
-import jp.wasabeef.recyclerview.animators.SlideInLeftAnimator;
 
 /**
  * Created by mdnafiskhan on 03-01-2017.
@@ -51,7 +56,9 @@ public class TracksFragment extends Fragment {
     private final static String[] columns ={MediaStore.Audio.Media.DATA,MediaStore.Audio.Media._ID, MediaStore.Audio.Media.DURATION, MediaStore.Audio.Media.ALBUM, MediaStore.Audio.Media.ARTIST, MediaStore.Audio.Media.TITLE, MediaStore.Audio.Media.IS_MUSIC,MediaStore.Audio.Media.IS_RINGTONE,MediaStore.Audio.Media.ARTIST,MediaStore.Audio.Media.SIZE ,MediaStore.Audio.Media._ID,MediaStore.Audio.Media.ALBUM_ID};
     private final String where = "is_music AND duration > 10000 AND _size <> '0' ";
     private final String orderBy =  MediaStore.Audio.Media.TITLE;
-    CustomRecyclerViewAdapter customRecyclerViewAdapter;
+    CustomRecyclerViewAdapter1 customRecyclerViewAdapter;
+    MainActivityViewModel mainActivityViewModel;
+    static Observer<Boolean> songUpdate;
     public TracksFragment() {
 
     }
@@ -64,8 +71,24 @@ public class TracksFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d("fragment created","created");
-        loader.set(getContext());
-        customRecyclerViewAdapter = new CustomRecyclerViewAdapter(getActivity(),give);
+       // loader.set(getContext());
+        mainActivityViewModel = ViewModelProviders.of(getActivity()).get(MainActivityViewModel.class);
+        observer();
+    }
+
+    void observer()
+    {
+        songUpdate = new Observer<Boolean>() {
+            @Override
+            public void onChanged(@Nullable Boolean aBoolean) {
+                   Log.d("msg","song is loaded");
+                   Log.d("msg",""+Mp3PlayerApplication.applicationSongsContent.getSongs().size());
+                   intlistview(Mp3PlayerApplication.applicationSongsContent.getSongs());
+            }
+        };
+
+        mainActivityViewModel.getUpdateYourSelf().observe(this,songUpdate);
+        Log.d("msg","observer is set");
 
     }
 
@@ -75,10 +98,10 @@ public class TracksFragment extends Fragment {
     {
         View v =inflater.inflate(R.layout.listviewofsongs,container,false);
         recyclerView = (RecyclerView) v.findViewById(R.id.recyclerview);
+      //  recyclerView.setVisibility(View.GONE);
+        customRecyclerViewAdapter = new CustomRecyclerViewAdapter1(getActivity(),Mp3PlayerApplication.applicationSongsContent.getSongs());
         recyclerView.setAdapter(customRecyclerViewAdapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity().getBaseContext()));
-        recyclerView.setVisibility(View.GONE);
-        new allsongs().execute();
+        recyclerView.setLayoutManager(new CustomLinearLayoutManager(getActivity()));
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -103,9 +126,10 @@ public class TracksFragment extends Fragment {
     }
 
 
-    public void intlistview()
+    public void intlistview(ArrayList<Songs> songs)
     {
-        recyclerView.getAdapter().notifyDataSetChanged();
+        //this.give=songs;
+       // customRecyclerViewAdapter.notifyDataSetChanged();
         recyclerView.setVisibility(View.VISIBLE);
     }
 
@@ -143,57 +167,7 @@ public class TracksFragment extends Fragment {
     };
 
 
-    public void allsongs()
-    {
-        cursor = getContext().getContentResolver().query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, columns, where, null, orderBy);
-        dataindex = cursor.getColumnIndex(MediaStore.Audio.Media.DATA);
-        albumindex = cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM);
-        titleindex = cursor.getColumnIndex(MediaStore.Audio.Media.TITLE);
-        durationindex = cursor.getColumnIndex(MediaStore.Audio.Media.DURATION);
-        artistindex = cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST);
-        cursor.moveToFirst();
-        for(int i=0;i<cursor.getCount();i++)
-        {
-            Songs song = new Songs();
-            song.setalbum(cursor.getString(albumindex));
-            song.settitle(cursor.getString(titleindex));
-            song.setAlbumId(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM_ID)));
-            song.setSonguri(Uri.parse(cursor.getString(dataindex)));
-            song.setartist(cursor.getString(artistindex));
-            song.setDuration(Long.decode(cursor.getString(durationindex)));
-            song.setPosition(cursor.getPosition());
-            song.setSongId(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media._ID)));
-            song.setAlbumart(loader.albumartwithalbum(song.getalbum()));
-            this.give.add(song);
-            cursor.moveToNext();
-        }
-        cursor.close();
-        Log.d("Size of tracks list",give.size()+"");
 
-    }
-
-    public class allsongs extends AsyncTask<Void,Void,Void>
-    {
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            give.clear();
-           // customRecyclerViewAdapter.notifyDataSetChanged();
-        }
-
-        @Override
-        protected Void doInBackground(Void... params) {
-            allsongs();
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            intlistview();
-        }
-    }
 public static class insertintoplaylist extends AsyncTask<Void,Void,Void>
 {
     Songs s = new Songs();
@@ -231,15 +205,23 @@ public static class insertintoplaylist extends AsyncTask<Void,Void,Void>
 }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        Log.d("TrackFragment","onResume");
+    }
+
+    @Override
     public void onStop() {
         super.onStop();
-        try{
+        Log.d("msg","TrackFragment onStop");
+       /* try{
              customRecyclerViewAdapter.unbindService();
         }
         catch (Exception e)
         {
             e.printStackTrace();
         }
+        */
 
     }
 }
