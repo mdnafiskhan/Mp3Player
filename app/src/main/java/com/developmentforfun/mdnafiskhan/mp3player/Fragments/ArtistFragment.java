@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.developmentforfun.mdnafiskhan.mp3player.Models.Artists;
+import com.developmentforfun.mdnafiskhan.mp3player.Mp3PlayerApplication;
 import com.developmentforfun.mdnafiskhan.mp3player.R;
 import com.developmentforfun.mdnafiskhan.mp3player.customAdapters.ArtistRecyclerView;
 
@@ -28,9 +29,6 @@ public class ArtistFragment extends Fragment {
 
     RecyclerView recyclerView;
     ArrayList<Artists> aa = new ArrayList<>();
-    final String[] columns3 = {MediaStore.Audio.Artists._ID, MediaStore.Audio.Artists.ARTIST,MediaStore.Audio.Artists.NUMBER_OF_ALBUMS,MediaStore.Audio.Artists.NUMBER_OF_TRACKS};
-    final static String orderBy3 = MediaStore.Audio.Albums.ARTIST;
-    public Cursor cursor3;
 
     public ArtistFragment() {
         super();
@@ -39,40 +37,23 @@ public class ArtistFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        aa = Mp3PlayerApplication.applicationSongsContent.getAllArtists();
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View v= inflater.inflate(R.layout.listviewofsongs,container,false);
-
-        recyclerView  = (RecyclerView) v.findViewById(R.id.recyclerview);
-        new artist().execute();
-        return v;
+        return inflater.inflate(R.layout.listviewofsongs,container,false);
+    }
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        recyclerView  = (RecyclerView) view.findViewById(R.id.recyclerview);
+        recyclerView.setAdapter(new ArtistRecyclerView(getActivity(),aa));
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity().getBaseContext()));
     }
 
-    public class artist extends AsyncTask<Void, Void ,Void>
-    {
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            recyclerView.setAdapter(new ArtistRecyclerView(getActivity(),aa));
-            recyclerView.setLayoutManager(new LinearLayoutManager(getActivity().getBaseContext()));
-            recyclerView.setItemAnimator(new SlideInLeftAnimator());
-        }
 
-        @Override
-        protected Void doInBackground(Void... params) {
-            allartist();
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            recyclerView.getAdapter().notifyDataSetChanged();
-        }
-    }
 
     @Override
     public void setInitialSavedState(SavedState state) {
@@ -87,22 +68,6 @@ public class ArtistFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-    }
-
-    public void allartist()
-    {
-        cursor3 = getContext().getContentResolver().query(MediaStore.Audio.Artists.EXTERNAL_CONTENT_URI, columns3, null, null, orderBy3);
-        cursor3.moveToFirst();
-        for(int i=0;i< cursor3.getCount() ;i++)
-        {
-            Artists art = new Artists();
-            art.setArtistname(cursor3.getString(cursor3.getColumnIndex(MediaStore.Audio.Artists.ARTIST)));
-            art.setNoalbums(Integer.parseInt(cursor3.getString(cursor3.getColumnIndex(MediaStore.Audio.Artists.NUMBER_OF_ALBUMS))));
-            art.setNofosongs(Integer.parseInt(cursor3.getString(cursor3.getColumnIndex(MediaStore.Audio.Artists.NUMBER_OF_TRACKS))));
-            this.aa.add(art);
-            cursor3.moveToNext();
-        }
-        cursor3.close();
     }
 }
 

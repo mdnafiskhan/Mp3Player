@@ -3,6 +3,7 @@ package com.developmentforfun.mdnafiskhan.mp3player.customAdapters;
 import android.content.Context;
 import android.content.Intent;
 import android.support.constraint.ConstraintLayout;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.developmentforfun.mdnafiskhan.mp3player.Activities.ActivityFragments.NavigationControler;
 import com.developmentforfun.mdnafiskhan.mp3player.Activities.ArtistActivity;
 import com.developmentforfun.mdnafiskhan.mp3player.Activities.Artist_Activity;
 import com.developmentforfun.mdnafiskhan.mp3player.Models.Artists;
@@ -49,10 +51,7 @@ public class ArtistRecyclerView extends RecyclerView.Adapter<ArtistRecyclerView.
              holder.constraintLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i= new Intent(context, Artist_Activity.class);
-                i.putExtra("artist", artist.get(position).getArtistname());
-                i.putExtra("noofsongs",artist.get(position).getNofosongs());
-                context.startActivity(i);
+                NavigationControler.navigateToArtistActivityFragment(((FragmentActivity)context).getSupportFragmentManager(),artist.get(position).getArtistname(),artist.get(position).getArtistId());
             }
         });
 

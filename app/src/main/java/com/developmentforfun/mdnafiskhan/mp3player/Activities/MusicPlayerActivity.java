@@ -1,8 +1,5 @@
 package com.developmentforfun.mdnafiskhan.mp3player.Activities;
 
-import android.animation.Animator;
-import android.animation.ObjectAnimator;
-import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -13,7 +10,6 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.Looper;
@@ -28,7 +24,6 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.graphics.Palette;
 import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -38,9 +33,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.developmentforfun.mdnafiskhan.mp3player.DataBase.DataBaseClass;
 import com.developmentforfun.mdnafiskhan.mp3player.Models.Songs;
 import com.developmentforfun.mdnafiskhan.mp3player.R;
 import com.developmentforfun.mdnafiskhan.mp3player.Service.MusicService;
@@ -48,8 +41,6 @@ import com.developmentforfun.mdnafiskhan.mp3player.Service.MusicService;
 import com.developmentforfun.mdnafiskhan.mp3player.SongLoader.SongDetailLoader;
 import com.developmentforfun.mdnafiskhan.mp3player.ViewpagerAnimation.ZoomOutPageTransformer;
 import com.developmentforfun.mdnafiskhan.mp3player.customAdapters.CustomAdapter;
-
-import java.util.ArrayList;
 
 import jp.wasabeef.blurry.Blurry;
 
@@ -463,7 +454,7 @@ public class MusicPlayerActivity extends AppCompatActivity{
             // BitmapDrawable ob = new BitmapDrawable(getResources(), blurredBitmap);
             //backg.setBackground(ob);
 
-            name.setText(now.gettitle());
+            name.setText(now.getTitle());
             album.setText(now.getartist()+"-"+now.getalbum());
 
         } catch (Exception e) {
@@ -481,7 +472,7 @@ public class MusicPlayerActivity extends AppCompatActivity{
      //   updatePlayerBar(bitmap);
         try {
             Blurry.with(context).radius(4)
-                    .sampling(5).color(Color.argb(0, 256, 256, 0))
+                    .sampling(5).color(Color.argb(0, 255, 255, 0))
                     .async()
                     .animate(200).from(bitmap).into(background);
         }

@@ -9,6 +9,7 @@ import android.graphics.BitmapFactory;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -29,7 +30,7 @@ import java.util.ArrayList;
  * Created by mdnafiskhan on 04-01-2017.
  */
 
-public class AlbumDetail extends Activity{
+public class AlbumDetail extends AppCompatActivity{
     ArrayList<Songs> give = new ArrayList<>();
     MediaPlayer mp = new MediaPlayer();
     MusicService musicService;
@@ -37,11 +38,11 @@ public class AlbumDetail extends Activity{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getWindow().getDecorView().setSystemUiVisibility(
+       /* getWindow().getDecorView().setSystemUiVisibility(
                 View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                         | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                         | View.SYSTEM_UI_FLAG_FULLSCREEN
-                        | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+                        | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);*/
         setContentView(R.layout.albumdetail);
         Bundle b= getIntent().getExtras();
         SongDetailLoader loader = new SongDetailLoader(getBaseContext());

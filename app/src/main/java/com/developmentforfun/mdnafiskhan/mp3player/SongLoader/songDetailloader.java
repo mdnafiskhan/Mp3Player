@@ -72,21 +72,21 @@ public class SongDetailLoader {
     }
 
     //function return the cursor for the album database.......
-   public Cursor getAlbumCursor(Context context)
-   {
-       final String[] columns2 = {MediaStore.Audio.Albums._ID, MediaStore.Audio.Albums.ALBUM_ART, MediaStore.Audio.Albums.NUMBER_OF_SONGS,MediaStore.Audio.Albums.ALBUM,MediaStore.Audio.Albums.ARTIST};
-       final String orderBy2 = MediaStore.Audio.Albums.ALBUM;
-       cursor2 = context.getContentResolver().query(MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI, columns2, null, null, orderBy2);
-       return cursor2;
-   }
+    public Cursor getAlbumCursor(Context context)
+    {
+        final String[] columns2 = {MediaStore.Audio.Albums._ID, MediaStore.Audio.Albums.ALBUM_ART, MediaStore.Audio.Albums.NUMBER_OF_SONGS,MediaStore.Audio.Albums.ALBUM,MediaStore.Audio.Albums.ARTIST};
+        final String orderBy2 = MediaStore.Audio.Albums.ALBUM;
+        cursor2 = context.getContentResolver().query(MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI, columns2, null, null, orderBy2);
+        return cursor2;
+    }
 
-   public Cursor getSongCursor(Context context)
-   {
-       String  orderby = MediaStore.Audio.Media.TITLE;;
-       String[]  col = {MediaStore.Audio.Albums._ID ,MediaStore.Audio.Media.DATA,MediaStore.Audio.Media.ALBUM,MediaStore.Audio.Media.TITLE, MediaStore.Audio.Media.ARTIST, MediaStore.Audio.Media.COMPOSER, MediaStore.Audio.Media.DURATION, MediaStore.Audio.Media.ALBUM_ID};
-       final String where= "is_music AND duration > 10000";
-       return context.getContentResolver().query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,col ,where ,null,orderby) ;
-   }
+    public Cursor getSongCursor(Context context)
+    {
+        String  orderby = MediaStore.Audio.Media.TITLE;;
+        String[]  col = {MediaStore.Audio.Albums._ID ,MediaStore.Audio.Media.DATA,MediaStore.Audio.Media.ALBUM,MediaStore.Audio.Media.TITLE, MediaStore.Audio.Media.ARTIST, MediaStore.Audio.Media.COMPOSER, MediaStore.Audio.Media.DURATION, MediaStore.Audio.Media.ALBUM_ID};
+        final String where= "is_music AND duration > 10000";
+        return context.getContentResolver().query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,col ,where ,null,orderby) ;
+    }
 
 
     public ArrayList<Artists> allartists()
@@ -120,19 +120,19 @@ public class SongDetailLoader {
             switch(withWhat)
             {
                 case "album" :
-                                 if(c.getString(c.getColumnIndex(MediaStore.Audio.Media.ALBUM_ID)).equals(content))
-                                   {
-                                       songs.settitle(c.getString(c.getColumnIndex(MediaStore.Audio.Media.TITLE)));
-                                       songs.setAlbumId(c.getString(c.getColumnIndex(MediaStore.Audio.Media.ALBUM_ID)));
-                                       songs.setSonguri(Uri.parse(c.getString(c.getColumnIndex(MediaStore.Audio.Media.DATA))));
-                                       songs.setSongId(c.getString(c.getColumnIndex(MediaStore.Audio.Media._ID)));
-                                       songs.setartist(c.getString(c.getColumnIndex(MediaStore.Audio.Media.ARTIST)));
-                                       songs.setalbum(c.getString(c.getColumnIndex(MediaStore.Audio.Media.ALBUM)));
-                                       songs.setDuration(Long.decode(c.getString(c.getColumnIndex(MediaStore.Audio.Media.DURATION))));
-                                       songs.setPosition(i);
-                                       songs.setAlbumart(albumartwithalbum(content));
-                                       s.add(songs);
-                                   }
+                    if(c.getString(c.getColumnIndex(MediaStore.Audio.Media.ALBUM_ID)).equals(content))
+                    {
+                        songs.settitle(c.getString(c.getColumnIndex(MediaStore.Audio.Media.TITLE)));
+                        songs.setAlbumId(c.getString(c.getColumnIndex(MediaStore.Audio.Media.ALBUM_ID)));
+                        songs.setSonguri(Uri.parse(c.getString(c.getColumnIndex(MediaStore.Audio.Media.DATA))));
+                        songs.setSongId(c.getString(c.getColumnIndex(MediaStore.Audio.Media._ID)));
+                        songs.setartist(c.getString(c.getColumnIndex(MediaStore.Audio.Media.ARTIST)));
+                        songs.setalbum(c.getString(c.getColumnIndex(MediaStore.Audio.Media.ALBUM)));
+                        songs.setDuration(Long.decode(c.getString(c.getColumnIndex(MediaStore.Audio.Media.DURATION))));
+                        songs.setPosition(i);
+                        songs.setAlbumart(albumartwithalbum(songs.getAlbum()));
+                        s.add(songs);
+                    }
                     break;
 
                 case "artist" : if(c.getString(c.getColumnIndex(MediaStore.Audio.Media.ARTIST)).equals(content))
@@ -184,11 +184,12 @@ public class SongDetailLoader {
             if(i==0)
                 cursor2.moveToFirst();
             else
-            cursor2.moveToNext();
+                cursor2.moveToNext();
 
             if(cursor2.getString(cursor2.getColumnIndex(MediaStore.Audio.Albums.ALBUM)).equals(album))
             {
                 String s =cursor2.getString(cursor2.getColumnIndex(MediaStore.Audio.Albums.ALBUM_ART));
+                //cursor2.close();
                 return s;
             }
         }

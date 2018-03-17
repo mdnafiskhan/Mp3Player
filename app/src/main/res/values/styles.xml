@@ -5,8 +5,9 @@
         <!-- Customize your theme here. -->
         <item name="colorPrimary">#cccccc</item>
         <item name="colorPrimaryDark">#191919</item>
-        <item name="colorAccent">#ffffff</item>
+        <item name="colorAccent">#000000</item>
         <item name="android:textColorPrimary">#ffffff</item>
+        <item name="android:colorBackground">#000000</item>
     </style>
 
     <style name="AppTheme2" parent="android:Theme.Holo.Light.Dialog">

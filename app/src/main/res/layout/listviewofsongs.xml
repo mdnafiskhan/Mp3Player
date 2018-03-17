@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
@@ -8,19 +8,26 @@
     android:animateLayoutChanges="true"
     android:background="#dd000000"
     android:layout_height="match_parent">
+
         <TextView
+            android:id="@+id/titleOfPage"
             android:layout_width="match_parent"
             android:layout_height="48dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/pd"
+            android:ellipsize="end"
             android:gravity="center"
+            android:maxLines="1"
             android:paddingLeft="8dp"
-            android:id="@+id/titleOfPage"
+            android:text="Bollywood Song"
             android:textColor="#cccccc"
             android:textSize="20sp"
-            android:maxLines="1"
-            android:ellipsize="end"
             android:visibility="gone"
-            android:background="@drawable/pd"
-            android:text="Bollywood Song"/>
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
         <android.support.v7.widget.RecyclerView
             android:layout_width="match_parent"
             android:layout_height="fill_parent"
@@ -33,4 +40,4 @@
 
         </android.support.v7.widget.RecyclerView>
 
-</LinearLayout>
+</android.support.constraint.ConstraintLayout>
