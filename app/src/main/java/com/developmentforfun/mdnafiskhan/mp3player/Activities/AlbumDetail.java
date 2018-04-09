@@ -16,9 +16,9 @@ import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import com.developmentforfun.mdnafiskhan.mp3player.R;
 
 import com.developmentforfun.mdnafiskhan.mp3player.Models.Songs;
-import com.developmentforfun.mdnafiskhan.mp3player.R;
 import com.developmentforfun.mdnafiskhan.mp3player.Service.MusicService;
 import com.developmentforfun.mdnafiskhan.mp3player.SongLoader.SongDetailLoader;
 import com.developmentforfun.mdnafiskhan.mp3player.customAdapters.albumdetailadapter;

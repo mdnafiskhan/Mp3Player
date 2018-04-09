@@ -10,23 +10,29 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.provider.MediaStore;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.developmentforfun.mdnafiskhan.mp3player.DataBase.DataBaseClass;
 import com.developmentforfun.mdnafiskhan.mp3player.Fragments.SongChooserFragment;
+import com.developmentforfun.mdnafiskhan.mp3player.Interface.SwipeDeleteInterface;
 import com.developmentforfun.mdnafiskhan.mp3player.Models.Songs;
 import com.developmentforfun.mdnafiskhan.mp3player.R;
 import com.developmentforfun.mdnafiskhan.mp3player.Service.MusicService;
+import com.developmentforfun.mdnafiskhan.mp3player.SongLoader.PlaylistProvider;
 import com.developmentforfun.mdnafiskhan.mp3player.SongLoader.SongDetailLoader;
-import com.developmentforfun.mdnafiskhan.mp3player.customAdapters.CustomRecyclerViewAdapter;
+import com.developmentforfun.mdnafiskhan.mp3player.customAdapters.CustomRecyclerViewAdapter0;
+import com.developmentforfun.mdnafiskhan.mp3player.customAdapters.CustomSwipeDeleteRecyclerViewAdapter;
 
 import java.util.ArrayList;
 
@@ -36,11 +42,11 @@ import jp.wasabeef.recyclerview.animators.SlideInLeftAnimator;
  * Created by mdnafiskhan on 25-03-2017.
  */
 
-public class Playlist extends AppCompatActivity {
+public class Playlist extends AppCompatActivity implements SwipeDeleteInterface{
     ArrayList<Songs> songses = new ArrayList<>();
     SongDetailLoader loader = new SongDetailLoader();
     MusicService musicService = new MusicService();
-    CharSequence playlistName,playlistId;
+    String playlistName,playlistId;
     boolean mBound ;
     RecyclerView recyclerView;
     Cursor cursor,cursor2;
@@ -48,31 +54,41 @@ public class Playlist extends AppCompatActivity {
     private final static String[] columns ={MediaStore.Audio.Media.DATA,MediaStore.Audio.Media._ID, MediaStore.Audio.Media.DURATION, MediaStore.Audio.Media.ALBUM, MediaStore.Audio.Media.ARTIST, MediaStore.Audio.Media.TITLE, MediaStore.Audio.Media.IS_MUSIC,MediaStore.Audio.Media.IS_RINGTONE,MediaStore.Audio.Media.ARTIST,MediaStore.Audio.Media.SIZE ,MediaStore.Audio.Media._ID,MediaStore.Audio.Media.ALBUM_ID};
     private final String orderBy =  MediaStore.Audio.Media.TITLE;
     Toolbar toolbar;
-    ImageView imageView;
+    CardView addFinally;
+    TextView tag;
+    CustomSwipeDeleteRecyclerViewAdapter customSwipeDeleteRecyclerViewAdapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.playlist_song_layout);
-        DataBaseClass dataBaseClass = new DataBaseClass(getBaseContext());
+        try {
+            playlistName = getIntent().getExtras().getString("playlistName");
+            playlistId = getIntent().getExtras().getString("playlistId");
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
         toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        imageView = (ImageView) findViewById(R.id.addnewsong);
-        playlistName = getIntent().getCharSequenceExtra("playlistName");
-        playlistId = getIntent().getCharSequenceExtra("playlistId");
-        recyclerView = (RecyclerView) findViewById(R.id.recyclerview3);
         toolbar.setTitle(playlistName+"");
         toolbar.setNavigationIcon(R.mipmap.left_arrow);
-        Intent i = new Intent(getBaseContext(),MusicService.class);
-        bindService(i, serviceConnection, Context.BIND_AUTO_CREATE);
-        loader.set(getBaseContext());
-        new getPlaylist().execute();
+        setSupportActionBar(toolbar);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 onBackPressed();
             }
         });
-        imageView.setOnClickListener(new View.OnClickListener() {
+        recyclerView = (RecyclerView) findViewById(R.id.recyclerview3);
+        addFinally = (CardView) findViewById(R.id.addFinally);
+        tag  =(TextView) findViewById(R.id.tag_of_addFinally);
+        tag.setText("Add More");
+        addFinally.setVisibility(View.VISIBLE);
+        Log.d("msg","playlistName = "+playlistName);
+        Intent i = new Intent(getBaseContext(),MusicService.class);
+        bindService(i, serviceConnection, Context.BIND_AUTO_CREATE);
+        loader.set(getBaseContext());
+        addFinally.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 FragmentManager manager = getSupportFragmentManager();
@@ -81,10 +97,18 @@ public class Playlist extends AppCompatActivity {
                     manager.beginTransaction().remove(frag).commit();
                 }
                 SongChooserFragment editNameDialog = new SongChooserFragment();
+                Bundle b = new Bundle();
+                b.putString("playlistName",playlistName);
+                b.putString("playlistId",playlistId);
+                editNameDialog.setArguments(b);
                 editNameDialog.show(manager, "fragment_edit_name");
 
             }
         });
+        customSwipeDeleteRecyclerViewAdapter = new CustomSwipeDeleteRecyclerViewAdapter(Playlist.this,songses,this);
+        recyclerView.setAdapter(customSwipeDeleteRecyclerViewAdapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getBaseContext()));
+        recyclerView.setItemAnimator(new SlideInLeftAnimator());
     }
 
     private ServiceConnection serviceConnection = new ServiceConnection() {
@@ -102,14 +126,47 @@ public class Playlist extends AppCompatActivity {
     };
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        new getPlaylist().execute();
+    }
+
+    @Override
     public void onStop() {
         super.onStop();
         try{
           unbindService(serviceConnection);
+          customSwipeDeleteRecyclerViewAdapter.unbindService();
         }
         catch (Exception e)
         {
             e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void DeleteTrackFromPlaylist(long songId) {
+        new RemoveSong(Long.parseLong(playlistId),songId).execute();
+    }
+
+    public class RemoveSong extends AsyncTask<Void,Void,Void>
+    {
+        long playlistId,songId;
+        public RemoveSong(long playlistId,long songId) {
+            super();
+            this.playlistId = playlistId;
+            this.songId = songId;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            PlaylistProvider.deletePlaylistTracks(getBaseContext(),playlistId,songId);
+            return null;
         }
     }
 
@@ -131,9 +188,7 @@ public class Playlist extends AppCompatActivity {
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-            recyclerView.setAdapter(new CustomRecyclerViewAdapter(Playlist.this,songses));
-            recyclerView.setLayoutManager(new LinearLayoutManager(getBaseContext()));
-            recyclerView.setItemAnimator(new SlideInLeftAnimator());
+            recyclerView.getAdapter().notifyDataSetChanged();
         }
 
         @Override

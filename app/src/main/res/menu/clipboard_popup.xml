@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/refresh"
+        android:title="Refresh Library" />
+    <item
+        android:id="@+id/sortaz"
+        android:title="Sort A-Z" />
+    <item
+        android:id="@+id/sortza"
+        android:title="Sort Z-A" />
+    <item
+        android:id="@+id/sortdataadded"
+        android:title="Sort Date Added" />
+    <item
+        android:id="@+id/sortalbumaz"
+        android:title="Sort Album A-Z" />
+    <item
+        android:id="@+id/sortalbumza"
+        android:title="Sort Album Z-A" />
+    <item
+        android:id="@+id/sortartistaz"
+        android:title="Sort Artist A-Z" />
+    <item
+        android:id="@+id/sortartistza"
+        android:title="Sort Artist Z-A" />
+    <item
+        android:id="@+id/sortduration"
+        android:title="Sort Duration" />
+</menu>

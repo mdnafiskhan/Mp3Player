@@ -7,6 +7,8 @@ import android.util.Log;
 
 import com.developmentforfun.mdnafiskhan.mp3player.Interface.NowPlayingChanged;
 import com.developmentforfun.mdnafiskhan.mp3player.Interface.SongIsLoaded;
+import com.developmentforfun.mdnafiskhan.mp3player.Interface.UpdateEqualizer;
+import com.developmentforfun.mdnafiskhan.mp3player.Models.EqualizerBands;
 import com.developmentforfun.mdnafiskhan.mp3player.Models.Songs;
 import com.developmentforfun.mdnafiskhan.mp3player.Mp3PlayerApplication;
 
@@ -14,12 +16,12 @@ import com.developmentforfun.mdnafiskhan.mp3player.Mp3PlayerApplication;
  * Created by mdnafiskhan on 15/03/2018.
  */
 
-public class MainActivityViewModel extends ViewModel implements NowPlayingChanged,SongIsLoaded {
+public class MainActivityViewModel extends ViewModel implements NowPlayingChanged,SongIsLoaded,UpdateEqualizer {
 
     private MutableLiveData<Songs> nowPlaying = new MutableLiveData<>();
     private MutableLiveData<Boolean> requestToOpenFragment = new MutableLiveData<>();
     private MutableLiveData<Boolean> updateYourSelf = new MutableLiveData<>();
-
+    private MutableLiveData<EqualizerBands> updateEqualizer = new MutableLiveData<>();
     public MainActivityViewModel() {
         super();
         Mp3PlayerApplication.setInterface(this);
@@ -59,6 +61,15 @@ public class MainActivityViewModel extends ViewModel implements NowPlayingChange
         return updateYourSelf;
     }
 
+    public LiveData<EqualizerBands> getUpdateEqualizer()
+    {
+        return updateEqualizer;
+    }
+
+    public void setUpdateEqualizer(EqualizerBands updateEqualizer) {
+        this.updateEqualizer.postValue(updateEqualizer);
+    }
+
     @Override
     public void setSong(Songs nowPlaying) {
         Log.d("msg","going to post value");
@@ -76,5 +87,12 @@ public class MainActivityViewModel extends ViewModel implements NowPlayingChange
             updateYourSelf.postValue(true);
         }
     }
+
+    @Override
+    public void updateEqualiser(EqualizerBands equalizerBands) {
+        this.updateEqualizer.postValue(equalizerBands);
+    }
+
+
 }
 

@@ -132,9 +132,9 @@ public class DataBaseClass extends SQLiteOpenHelper {
         db.close();
     }
 
-    public ArrayList<Integer> getBands()
+    public ArrayList<Short> getBands()
     {
-        ArrayList<Integer> arrayList = new ArrayList<>();
+        ArrayList<Short> arrayList = new ArrayList<>();
         SQLiteDatabase db = getReadableDatabase() ;
         String query = "SELECT * FROM "+TABLE4_NAME+" WHERE 1" ;
         Cursor c= db.rawQuery(query,null);
@@ -142,11 +142,11 @@ public class DataBaseClass extends SQLiteOpenHelper {
         c.moveToFirst();
         while (!c.isAfterLast())
         {
-            arrayList.add(c.getInt(c.getColumnIndex(BAND0)));
-            arrayList.add(c.getInt(c.getColumnIndex(BAND1)));
-            arrayList.add(c.getInt(c.getColumnIndex(BAND2)));
-            arrayList.add(c.getInt(c.getColumnIndex(BAND3)));
-            arrayList.add(c.getInt(c.getColumnIndex(BAND4)));
+            arrayList.add(c.getShort(c.getColumnIndex(BAND0)));
+            arrayList.add(c.getShort(c.getColumnIndex(BAND1)));
+            arrayList.add(c.getShort(c.getColumnIndex(BAND2)));
+            arrayList.add(c.getShort(c.getColumnIndex(BAND3)));
+            arrayList.add(c.getShort(c.getColumnIndex(BAND4)));
             c.moveToNext();
         }
         c.close();

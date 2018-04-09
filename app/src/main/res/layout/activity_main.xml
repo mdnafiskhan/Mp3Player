@@ -53,7 +53,7 @@
                         app:stl_defaultTabBackground="?attr/selectableItemBackground"
                         app:stl_defaultTabTextAllCaps="true"
                         app:stl_defaultTabTextColor="#dddddd"
-                        app:stl_defaultTabTextHorizontalPadding="12dp"
+                        app:stl_defaultTabTextHorizontalPadding="6dp"
                         app:stl_defaultTabTextMinWidth="0dp"
                         app:stl_defaultTabTextSize="18sp"
                         app:stl_distributeEvenly="false"
@@ -134,10 +134,6 @@
             android:layout_margin="16dp"
             android:src="@drawable/default_track_light"
            />
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/fragment_container"/>
         </android.support.design.widget.CoordinatorLayout>
 
 

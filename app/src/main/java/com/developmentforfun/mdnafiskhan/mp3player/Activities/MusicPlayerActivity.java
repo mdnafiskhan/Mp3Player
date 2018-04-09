@@ -254,7 +254,7 @@ public class MusicPlayerActivity extends AppCompatActivity{
                     final AlertDialog.Builder builder = new AlertDialog.Builder(MusicPlayerActivity.this,R.style.MyAlertDialogStyle);
                     final DataBaseClass db = new DataBaseClass(getBaseContext());
                     final ArrayList<String> list = db.findplaylist();
-                    list.add("Add Playlist");
+                    list.add("Add PlaylistProvider");
                     LayoutInflater layoutInflater = LayoutInflater.from(getBaseContext());
                     View view = layoutInflater.inflate(R.layout.playlistdialog1,null);
                     final View view2 = layoutInflater.inflate(R.layout.playlistdialog2,null);
@@ -268,7 +268,7 @@ public class MusicPlayerActivity extends AppCompatActivity{
                             if(position == list.size()-1)
                             {
                                 dis.dismiss();
-                                builder.setTitle("Create Playlist");
+                                builder.setTitle("Create PlaylistProvider");
                                 builder.setView(view2);
                                 builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                                     @Override
@@ -317,7 +317,7 @@ public class MusicPlayerActivity extends AppCompatActivity{
                     }
                     else
                     {
-                        builder.setTitle("Create Playlist");
+                        builder.setTitle("Create PlaylistProvider");
                         builder.setView(view2);
                         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                             @Override

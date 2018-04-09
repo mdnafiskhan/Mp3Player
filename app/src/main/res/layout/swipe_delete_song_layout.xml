@@ -1,0 +1,14 @@
+<com.daimajia.swipe.SwipeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="wrap_content">
+    <!-- Bottom View Start-->
+   <include
+       layout="@layout/backround_view_swipe_delete"
+       />
+    <!-- Bottom View End-->
+
+    <!-- Surface View Start -->
+    <include
+    layout="@layout/trackscontentlayout"/>
+
+    <!-- Surface View End -->
+</com.daimajia.swipe.SwipeLayout>

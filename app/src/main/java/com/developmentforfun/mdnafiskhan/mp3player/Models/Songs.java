@@ -18,7 +18,9 @@ public class Songs {
     String albumart;
     String artist;
     String albumId;
+    String artistId;
     String songId;
+    String dateAdded;
 
     public void setSonguri( Uri songuri)
     {
@@ -45,6 +47,22 @@ public class Songs {
     {
 
       this.Duration = duration;
+    }
+
+    public String getArtistId() {
+        return artistId;
+    }
+
+    public void setArtistId(String artistId) {
+        this.artistId = artistId;
+    }
+
+    public String getDateAdded() {
+        return dateAdded;
+    }
+
+    public void setDateAdded(String dateAdded) {
+        this.dateAdded = dateAdded;
     }
 
     public String getTitle() {

@@ -1,0 +1,46 @@
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory
+        android:title="Timer">
+
+        <com.developmentforfun.mdnafiskhan.mp3player.CustomView.PrefrenceView.TimePreference
+            android:key="Sleep_time"
+            android:title="Sleep Time"
+            android:defaultValue="12:00"
+            android:summary="Set your desired time to stop playing song"
+             />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="Custom">
+
+        <CheckBoxPreference
+            android:key="chooseTheme"
+            android:summary="Choose theme for application"
+            android:title="Change theme" />
+
+        <CheckBoxPreference
+            android:key="hide_small"
+            android:summary="Audio file with duration less than 20 sec will be hidden"
+            android:title="Hide small clips" />
+
+        <CheckBoxPreference
+            android:key="grid_album"
+            android:summary="Album will be shown as 2x2 grid"
+            android:title="Album as grid" />
+
+        <ListPreference
+            android:entries="@array/media_names"
+            android:entryValues="@array/media_names_val"
+            android:key="homelist"
+            android:summary="Page to display after app start"
+            android:title="Home page" />
+
+        <CheckBoxPreference
+            android:key="detect_headphone"
+            android:summary="Song will be paused when Head phone is detached  "
+            android:title="Stop playing on Head phone detached" />
+
+    </PreferenceCategory>
+</PreferenceScreen>

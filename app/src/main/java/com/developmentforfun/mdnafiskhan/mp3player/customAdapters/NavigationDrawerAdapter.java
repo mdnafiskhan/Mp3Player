@@ -18,7 +18,7 @@ import java.util.ArrayList;
 
 public class NavigationDrawerAdapter extends BaseAdapter {
     Context context ;
-    String [] s={"NAVIGATION","Now Playing","Library","Playlist","Equalizer","Settings"};
+    String [] s={"NAVIGATION","Now Playing","Library","PlaylistProvider","Equalizer","Settings"};
     LayoutInflater inflator ;
     public NavigationDrawerAdapter(Context context) {
         this.context = context ;
@@ -52,6 +52,8 @@ public class NavigationDrawerAdapter extends BaseAdapter {
         {
             convertView = inflator.inflate(R.layout.style,parent,false);
             TextView t= (TextView) convertView.findViewById(R.id.textView);
+            ImageView imageView = convertView.findViewById(R.id.optionButton2);
+            imageView.setVisibility(View.GONE);
             t.setText(s[position]);
         }
 

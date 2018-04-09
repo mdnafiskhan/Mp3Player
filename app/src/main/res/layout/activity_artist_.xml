@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_content"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    android:orientation="vertical"
+    android:animateLayoutChanges="true"
+    android:background="#dd000000"
+    tools:context="com.developmentforfun.mdnafiskhan.mp3player.Activities.Artist_Activity">
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        android:background="@drawable/pd">
+       <TextView
+           android:layout_width="0dp"
+           android:layout_height="wrap_content"
+           android:maxLines="1"
+           android:id="@+id/artistHead"
+           android:ellipsize="marquee"
+           android:textSize="22sp"
+           android:text="N.A"
+           android:textAllCaps="false"
+           android:gravity="center"
+           android:textColor="#ffffff"
+           android:layout_marginRight="8dp"
+           app:layout_constraintRight_toRightOf="parent"
+           android:layout_marginLeft="8dp"
+           app:layout_constraintLeft_toLeftOf="parent"
+           app:layout_constraintTop_toTopOf="parent"
+           android:layout_marginTop="8dp" />
+    </android.support.constraint.ConstraintLayout>
+    <com.ogaclejapan.smarttablayout.SmartTabLayout
+        android:id="@+id/tablayout"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:background="@drawable/pd"
+        app:stl_indicatorAlwaysInCenter="false"
+        app:stl_indicatorWithoutPadding="false"
+        app:stl_indicatorInFront="false"
+        app:stl_indicatorInterpolation="smart"
+        app:stl_indicatorGravity="bottom"
+        app:stl_indicatorColor="#77aaaaaa"
+        app:stl_indicatorThickness="8dp"
+        app:stl_indicatorWidth="auto"
+        app:stl_indicatorCornerRadius="8dp"
+        app:stl_overlineColor="#4D000000"
+        app:stl_overlineThickness="0dp"
+        app:stl_underlineColor="#4D000000"
+        app:stl_underlineThickness="2dp"
+        app:stl_dividerColor="#4D000000"
+        app:stl_dividerThickness="0dp"
+        app:stl_defaultTabBackground="?attr/selectableItemBackground"
+        app:stl_defaultTabTextAllCaps="true"
+        app:stl_defaultTabTextColor="#dddddd"
+        app:stl_defaultTabTextSize="16sp"
+        app:stl_defaultTabTextMinWidth="0dp"
+        app:stl_distributeEvenly="true"
+        app:stl_clickable="true"
+        app:stl_titleOffset="auto_center"
+        app:stl_drawDecorationAfterTab="true"
+        />
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:alpha="0"
+        android:animateLayoutChanges="true"
+        android:visibility="gone"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+
+</LinearLayout>

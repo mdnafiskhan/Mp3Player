@@ -4,6 +4,7 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.arch.persistence.room.Room;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -19,6 +20,7 @@ import android.media.audiofx.BassBoost;
 import android.media.audiofx.Equalizer;
 import android.media.audiofx.Virtualizer;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Binder;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
@@ -36,9 +38,12 @@ import com.developmentforfun.mdnafiskhan.mp3player.Activities.MainActivity;
 import com.developmentforfun.mdnafiskhan.mp3player.Activities.PlayerActivity;
 import com.developmentforfun.mdnafiskhan.mp3player.DataBase.DataBaseClass;
 import com.developmentforfun.mdnafiskhan.mp3player.Interface.MediaEvents;
+import com.developmentforfun.mdnafiskhan.mp3player.Interface.MediaEvents2;
 import com.developmentforfun.mdnafiskhan.mp3player.Models.Songs;
 import com.developmentforfun.mdnafiskhan.mp3player.Mp3PlayerApplication;
 import com.developmentforfun.mdnafiskhan.mp3player.R;
+import com.developmentforfun.mdnafiskhan.mp3player.RoomDatabase.AppDatabase;
+import com.developmentforfun.mdnafiskhan.mp3player.RoomDatabase.CloneEqualiser;
 import com.developmentforfun.mdnafiskhan.mp3player.SongLoader.SongDetailLoader;
 
 import java.util.ArrayList;
@@ -50,6 +55,7 @@ public class MusicService extends Service implements MediaPlayer.OnInfoListener 
     Uri currentSonguri;
     static int song_position_in_arraylist ;
     public MediaPlayer mediaPlayer = new MediaPlayer();
+    public static boolean IsPlaylistSet = false;
     AudioManager mAudioManager;
     ComponentName mRemoteControlResponder;
     MainActivity main =new MainActivity();
@@ -60,6 +66,7 @@ public class MusicService extends Service implements MediaPlayer.OnInfoListener 
     ArrayList<Songs> played_Songs = new ArrayList<>();
     public Songs PlayNextSong = new Songs();
     boolean isPlayNextSet = false;
+    AppDatabase appDatabase;
     Intent intent;
     NotificationManager notificationManager;
     RemoteViews smallView ,largeView;
@@ -72,7 +79,7 @@ public class MusicService extends Service implements MediaPlayer.OnInfoListener 
     int from=0;
     boolean shuffle = false;
     public int repeatTime = 0;  // 0 -> no repeat ,1-> repeat once,2-> multipleRepeat ;
-    boolean DoNotStartMediaPlayer = false;
+    public boolean DoNotStartMediaPlayer = false;
     public static MediaMetadataRetriever data = new MediaMetadataRetriever();
 
     /***/ MediaSessionCompat mediaSession ;
@@ -86,6 +93,7 @@ public class MusicService extends Service implements MediaPlayer.OnInfoListener 
     public static ArrayList<Songs> songs_current_playlist = new ArrayList<>();
     public ArrayList<Songs> prioritysonglist = new ArrayList<>();
     MediaEvents mediaEvents;
+    MediaEvents2 mediaEvents2;
     Mp3PlayerApplication mp3PlayerApplication;
 
     //*********************************************************************************************************************************************************
@@ -101,6 +109,12 @@ public class MusicService extends Service implements MediaPlayer.OnInfoListener 
     {
         this.mediaEvents = mediaEvents;
     }
+
+    public void setCallbacks2(MediaEvents2 mediaEvents)
+    {
+        this.mediaEvents2 = mediaEvents;
+    }
+
 
 
     @Nullable
@@ -207,8 +221,9 @@ public class MusicService extends Service implements MediaPlayer.OnInfoListener 
 //2....
     public void SetNext(Songs s)
     {
-        this.PlayNextSong = s;
-        isPlayNextSet= true;
+      //  this.PlayNextSong = s;
+        isPlayNextSet= false;
+        this.songs_current_playlist.add(this.positionOfCurrentSong+1,s);
         updatenotification();
     }
 
@@ -218,8 +233,9 @@ public class MusicService extends Service implements MediaPlayer.OnInfoListener 
         this.songs_current_playlist = songslist ;
         this.positionOfCurrentSong = position;
         this.Current_playing_song  = songslist.get(position);
-        mp3PlayerApplication.setApplicationModelClass(this.Current_playing_song);
+        mp3PlayerApplication.setApplicationModelClass(this.Current_playing_song,getApplicationContext());
         Log.d("current playing song is",""+Current_playing_song.gettitle());
+        this.IsPlaylistSet = true;
     }
 
 
@@ -228,7 +244,7 @@ public class MusicService extends Service implements MediaPlayer.OnInfoListener 
         this.songs_current_playlist = songslist ;
         this.positionOfCurrentSong = position;
         this.Current_playing_song  = songslist.get(position);
-        mp3PlayerApplication.setApplicationModelClass(this.Current_playing_song);
+        mp3PlayerApplication.setApplicationModelClass(this.Current_playing_song,getApplicationContext());
         Log.d("current playing song is",""+Current_playing_song.gettitle());
         from =1;
 
@@ -295,10 +311,16 @@ public class MusicService extends Service implements MediaPlayer.OnInfoListener 
 //       Log.d("mediaPlayer",""+mediaPlayer.toString());
        if(mediaPlayer!=null)
        {
-
-           mediaPlayer.stop();
-           mediaPlayer.reset();
-           mediaPlayer.release();
+        try {
+           if(mediaPlayer.isPlaying())
+            mediaPlayer.stop();
+            mediaPlayer.reset();
+            mediaPlayer.release();
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
        }
        mediaPlayer  =new MediaPlayer();
        from =0;
@@ -317,7 +339,7 @@ public class MusicService extends Service implements MediaPlayer.OnInfoListener 
           mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
               @Override
               public void onCompletion(MediaPlayer mp) {
-                  Log.d("complet", "Listner get called");
+                  Log.d("complet", "Listener get called");
                   equalizer.setEnabled(false);
                   if(!mediaPlayer.isPlaying())
                       playnext(false);
@@ -344,8 +366,8 @@ public class MusicService extends Service implements MediaPlayer.OnInfoListener 
         }
       catch (Exception e)
        {
-        e.printStackTrace();
-        playnext(true);
+         e.printStackTrace();
+         playnext(true);
         return;
        }
 
@@ -365,6 +387,17 @@ public class MusicService extends Service implements MediaPlayer.OnInfoListener 
         {
             e.printStackTrace();
         }
+
+        bass(Mp3PlayerApplication.equalizerBands.getBassBoost());
+        vir(Mp3PlayerApplication.equalizerBands.getVisualizer());
+        eq((short)0,(short) (Mp3PlayerApplication.equalizerBands.getBand0()-1500));
+        eq((short)1,(short) (Mp3PlayerApplication.equalizerBands.getBand1()-1500));
+        eq((short)2,(short) (Mp3PlayerApplication.equalizerBands.getBand2()-1500));
+        eq((short)3,(short) (Mp3PlayerApplication.equalizerBands.getBand3()-1500));
+        eq((short)4,(short) (Mp3PlayerApplication.equalizerBands.getBand4()-1500));
+
+
+
       //    Log.d("...", equalizer.getNumberOfBands() + "and 2->" + equalizer.getBandLevel((short) 2));
      //
      //     equalizer.setBandLevel((short) 2, (short) (2 * equalizer.getCenterFreq((short) 2)));
@@ -396,6 +429,7 @@ public class MusicService extends Service implements MediaPlayer.OnInfoListener 
        SharedPreferences sharedPreferences =getBaseContext().getSharedPreferences("lastplayed",Context.MODE_PRIVATE);
        SharedPreferences.Editor editor= sharedPreferences.edit();
        editor.putString("uri",Current_playing_song.getSonguri().toString());
+       editor.putString("id",Current_playing_song.getSongId());
        editor.apply();
        Log.d("this","broadcast send");
 
@@ -408,27 +442,50 @@ public class MusicService extends Service implements MediaPlayer.OnInfoListener 
        {
            mediaEvents.update();
        }
+       if(mediaEvents2!=null)
+       {
+           mediaEvents2.update();
+       }
    }
 
    public void bass(short progress)
    {
-       bassBoost.setStrength(progress);
-       Log.d("bass new level"," "+bassBoost.getProperties().strength);
+       try {
+           bassBoost.setStrength(progress);
+           Log.d("bass new level"," "+bassBoost.getProperties().strength);
+       }
+       catch (Exception e)
+       {
+           e.printStackTrace();
+       }
    }
     public void vir(short progress)
     {
-        virtualizer.setStrength(progress);
-        Log.d("vir new level"," "+virtualizer.getProperties().strength);
+        try {
+            virtualizer.setStrength(progress);
+            Log.d("vir new level"," "+virtualizer.getProperties().strength);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
     }
     //function for equaliser settings...
     public void eq(short bandNo , short precentage )
     {
-      int min = equalizer.getBandLevelRange()[0];
-      int max = equalizer.getBandLevelRange()[1];
-         // short b = (short)((precentage/100)*max);
-       equalizer.setBandLevel(bandNo, precentage);
+        try {
+            int min = equalizer.getBandLevelRange()[0];
+            int max = equalizer.getBandLevelRange()[1];
+            // short b = (short)((precentage/100)*max);
+            equalizer.setBandLevel(bandNo, precentage);
+
         Log.d("percentage"," "+precentage);
        Log.d("New level of band "+bandNo," is "+equalizer.getBandLevel(bandNo));
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
     }
    public void showlevel()
    {
@@ -525,6 +582,7 @@ public class MusicService extends Service implements MediaPlayer.OnInfoListener 
 
     public void start()
     {
+        DoNotStartMediaPlayer = false;
         if(mediaPlayer!=null) {
             if (!mediaPlayer.isPlaying()) {
                 if (requestAudioFocusForMyApp(context)) {
@@ -567,7 +625,7 @@ public class MusicService extends Service implements MediaPlayer.OnInfoListener 
         {
             Log.d("in","1");
             Current_playing_song = PlayNextSong;
-            mp3PlayerApplication.setApplicationModelClass(this.Current_playing_song);
+            mp3PlayerApplication.setApplicationModelClass(this.Current_playing_song,getApplicationContext());
             PlayNextSong = null;
         }
         else if(priorityqueue.size() == 0 || queuePosition == priorityqueue.size()) {
@@ -584,12 +642,12 @@ public class MusicService extends Service implements MediaPlayer.OnInfoListener 
                     if (positionOfCurrentSong < songs_current_playlist.size() - 1) {
 
                         Current_playing_song = songs_current_playlist.get(positionOfCurrentSong + 1);
-                        mp3PlayerApplication.setApplicationModelClass(this.Current_playing_song);
+                        mp3PlayerApplication.setApplicationModelClass(this.Current_playing_song,getApplicationContext());
                         positionOfCurrentSong++;
                         DoNotStartMediaPlayer = false;
                     } else {
                         Current_playing_song = songs_current_playlist.get(0);
-                        mp3PlayerApplication.setApplicationModelClass(this.Current_playing_song);
+                        mp3PlayerApplication.setApplicationModelClass(this.Current_playing_song,getApplicationContext());
                         positionOfCurrentSong = 0;
                         DoNotStartMediaPlayer = true;
                     }
@@ -598,11 +656,11 @@ public class MusicService extends Service implements MediaPlayer.OnInfoListener 
                     DoNotStartMediaPlayer=false;
                     if (positionOfCurrentSong < songs_current_playlist.size() - 1) {
                         Current_playing_song = songs_current_playlist.get(positionOfCurrentSong + 1);
-                        mp3PlayerApplication.setApplicationModelClass(this.Current_playing_song);
+                        mp3PlayerApplication.setApplicationModelClass(this.Current_playing_song,getApplicationContext());
                         positionOfCurrentSong++;
                     } else {
                         Current_playing_song = songs_current_playlist.get(0);
-                        mp3PlayerApplication.setApplicationModelClass(this.Current_playing_song);
+                        mp3PlayerApplication.setApplicationModelClass(this.Current_playing_song,getApplicationContext());
                         positionOfCurrentSong = 0;
                     }
                     break;
@@ -617,11 +675,11 @@ public class MusicService extends Service implements MediaPlayer.OnInfoListener 
         {
             Log.d("in","3");
             Current_playing_song = priorityqueue.get(queuePosition);
-            mp3PlayerApplication.setApplicationModelClass(this.Current_playing_song);
+            mp3PlayerApplication.setApplicationModelClass(this.Current_playing_song,getApplicationContext());
             queuePosition++;
         }
         Log.d("current playing song",""+Current_playing_song.getSonguri()+"");
-        setMediaPlayer();
+         setMediaPlayer();
        // if (musicPlayerActivity.isactivityisrenning)
 //            musicPlayerActivity.updateyourself();
     }
@@ -629,8 +687,9 @@ public class MusicService extends Service implements MediaPlayer.OnInfoListener 
 
     public void insertinqueue(Songs s)
     {
-        priorityqueue.add(s);
-        Log.d("song add ",""+priorityqueue.get(queuePosition).gettitle());
+       // priorityqueue.add(s);
+          this.songs_current_playlist.add(s);
+      //  Log.d("song add ",""+priorityqueue.get(queuePosition).gettitle());
     }
 
 
@@ -640,13 +699,13 @@ public class MusicService extends Service implements MediaPlayer.OnInfoListener 
         if(positionOfCurrentSong >0)
         {
             Current_playing_song = songs_current_playlist.get(positionOfCurrentSong - 1);
-            mp3PlayerApplication.setApplicationModelClass(this.Current_playing_song);
+            mp3PlayerApplication.setApplicationModelClass(this.Current_playing_song,getApplicationContext());
             positionOfCurrentSong--;
         }
         else
         {
             Current_playing_song = songs_current_playlist.get(songs_current_playlist.size()-1);
-            mp3PlayerApplication.setApplicationModelClass(this.Current_playing_song);
+            mp3PlayerApplication.setApplicationModelClass(this.Current_playing_song,getApplicationContext());
             positionOfCurrentSong =songs_current_playlist.size()-1;
         }
 

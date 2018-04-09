@@ -2,6 +2,7 @@ package com.developmentforfun.mdnafiskhan.mp3player.customAdapters;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.RecyclerView;
@@ -14,6 +15,7 @@ import android.widget.TextView;
 import com.developmentforfun.mdnafiskhan.mp3player.Activities.ActivityFragments.NavigationControler;
 import com.developmentforfun.mdnafiskhan.mp3player.Activities.ArtistActivity;
 import com.developmentforfun.mdnafiskhan.mp3player.Activities.Artist_Activity;
+import com.developmentforfun.mdnafiskhan.mp3player.Activities.Fragment_Container_Activity;
 import com.developmentforfun.mdnafiskhan.mp3player.Models.Artists;
 import com.developmentforfun.mdnafiskhan.mp3player.R;
 
@@ -42,7 +44,7 @@ public class ArtistRecyclerView extends RecyclerView.Adapter<ArtistRecyclerView.
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder,final int position) {
+    public void onBindViewHolder( final ViewHolder holder,final int position) {
           holder.artistName.setText(artist.get(position).getArtistname());
          if(artist.get(position).getNofosongs()>1)
           holder.noOfSOngs.setText(artist.get(position).getNofosongs()+" songs");
@@ -51,7 +53,14 @@ public class ArtistRecyclerView extends RecyclerView.Adapter<ArtistRecyclerView.
              holder.constraintLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                NavigationControler.navigateToArtistActivityFragment(((FragmentActivity)context).getSupportFragmentManager(),artist.get(position).getArtistname(),artist.get(position).getArtistId());
+                Bundle b= new Bundle();
+                b.putString("ArtistId",artist.get(holder.getAdapterPosition()).getArtistId());
+                b.putString("ArtistName",artist.get(holder.getAdapterPosition()).getArtistname());
+                b.putString("which","ArtistDetail");
+                Intent i = new Intent(context, Fragment_Container_Activity.class);
+                i.putExtras(b);
+                context.startActivity(i);
+                ///NavigationControler.navigateToArtistActivityFragment(((FragmentActivity)context).getSupportFragmentManager(),artist.get(position).getArtistname(),artist.get(position).getArtistId());
             }
         });
 

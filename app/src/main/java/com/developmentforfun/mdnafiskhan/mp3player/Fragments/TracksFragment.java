@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.database.Cursor;
 import android.media.MediaPlayer;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -25,15 +24,12 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.developmentforfun.mdnafiskhan.mp3player.Activities.ActivityViewModel.MainActivityViewModel;
-import com.developmentforfun.mdnafiskhan.mp3player.Activities.MainActivity;
 import com.developmentforfun.mdnafiskhan.mp3player.DataBase.DataBaseClass;
 import com.developmentforfun.mdnafiskhan.mp3player.Models.Songs;
 import com.developmentforfun.mdnafiskhan.mp3player.Mp3PlayerApplication;
 import com.developmentforfun.mdnafiskhan.mp3player.R;
 import com.developmentforfun.mdnafiskhan.mp3player.Service.MusicService;
 import com.developmentforfun.mdnafiskhan.mp3player.SongLoader.SongDetailLoader;
-import com.developmentforfun.mdnafiskhan.mp3player.customAdapters.CustomLinearLayoutManager;
-import com.developmentforfun.mdnafiskhan.mp3player.customAdapters.CustomRecyclerViewAdapter;
 import com.developmentforfun.mdnafiskhan.mp3player.customAdapters.CustomRecyclerViewAdapter1;
 
 import java.util.ArrayList;
@@ -101,7 +97,7 @@ public class TracksFragment extends Fragment {
       //  recyclerView.setVisibility(View.GONE);
         customRecyclerViewAdapter = new CustomRecyclerViewAdapter1(getActivity(),Mp3PlayerApplication.applicationSongsContent.getSongs());
         recyclerView.setAdapter(customRecyclerViewAdapter);
-        recyclerView.setLayoutManager(new CustomLinearLayoutManager(getActivity()));
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -129,7 +125,7 @@ public class TracksFragment extends Fragment {
     public void intlistview(ArrayList<Songs> songs)
     {
         //this.give=songs;
-       // customRecyclerViewAdapter.notifyDataSetChanged();
+       // customRecyclerViewAdapter0.notifyDataSetChanged();
         recyclerView.setVisibility(View.VISIBLE);
     }
 
@@ -215,7 +211,7 @@ public static class insertintoplaylist extends AsyncTask<Void,Void,Void>
         super.onStop();
         Log.d("msg","TrackFragment onStop");
        /* try{
-             customRecyclerViewAdapter.unbindService();
+             customRecyclerViewAdapter0.unbindService();
         }
         catch (Exception e)
         {

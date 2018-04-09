@@ -1,15 +1,15 @@
 package com.developmentforfun.mdnafiskhan.mp3player.Activities;
 
-import android.app.ActivityOptions;
+import android.animation.Animator;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.arch.persistence.room.Room;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.databinding.DataBindingUtil;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -21,7 +21,6 @@ import android.graphics.RectF;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.provider.MediaStore;
@@ -40,7 +39,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
-import android.transition.TransitionInflater;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
@@ -53,10 +51,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.developmentforfun.mdnafiskhan.mp3player.Activities.ActivityFragments.AlbumDetailFragment;
 import com.developmentforfun.mdnafiskhan.mp3player.Activities.ActivityFragments.NavigationControler;
 import com.developmentforfun.mdnafiskhan.mp3player.Activities.ActivityViewModel.MainActivityViewModel;
-import com.developmentforfun.mdnafiskhan.mp3player.ApplicationModelClass;
 import com.developmentforfun.mdnafiskhan.mp3player.Fragments.AlbumFragment;
 import com.developmentforfun.mdnafiskhan.mp3player.Fragments.ArtistFragment;
 import com.developmentforfun.mdnafiskhan.mp3player.Fragments.FavFragment;
@@ -64,16 +60,20 @@ import com.developmentforfun.mdnafiskhan.mp3player.Fragments.FolderFragment;
 import com.developmentforfun.mdnafiskhan.mp3player.Fragments.GenresFragment;
 import com.developmentforfun.mdnafiskhan.mp3player.Fragments.MostPlayedFragment;
 import com.developmentforfun.mdnafiskhan.mp3player.Fragments.Playlists;
+import com.developmentforfun.mdnafiskhan.mp3player.Fragments.RecentlyAdded;
 import com.developmentforfun.mdnafiskhan.mp3player.Fragments.TracksFragment;
 import com.developmentforfun.mdnafiskhan.mp3player.Helpers.SongHelper;
 import com.developmentforfun.mdnafiskhan.mp3player.Interface.OnBackPress;
 import com.developmentforfun.mdnafiskhan.mp3player.Models.Albums;
 import com.developmentforfun.mdnafiskhan.mp3player.Models.Artists;
+import com.developmentforfun.mdnafiskhan.mp3player.Models.EqualizerBands;
 import com.developmentforfun.mdnafiskhan.mp3player.Models.Genre;
 import com.developmentforfun.mdnafiskhan.mp3player.Models.SearchedContent;
 import com.developmentforfun.mdnafiskhan.mp3player.Models.Songs;
 import com.developmentforfun.mdnafiskhan.mp3player.Mp3PlayerApplication;
 import com.developmentforfun.mdnafiskhan.mp3player.R;
+import com.developmentforfun.mdnafiskhan.mp3player.RoomDatabase.AppDatabase;
+import com.developmentforfun.mdnafiskhan.mp3player.RoomDatabase.CloneEqualiser;
 import com.developmentforfun.mdnafiskhan.mp3player.Service.MusicService;
 import com.developmentforfun.mdnafiskhan.mp3player.SongLoader.SongDetailLoader;
 import com.developmentforfun.mdnafiskhan.mp3player.customAdapters.CustomSearchRecycler;
@@ -86,14 +86,16 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
     private MainActivityViewModel mainActivityViewModel;
     private String[] mPlanetTitles={"Tracks","Album","Artist","Genre","Folders","Playlist"};
-    private String[] mPlanetTitles2={"MostPlayed","Favorites","Playlist"};
+    private String[] mPlanetTitles2={"Favorites","Recently Added","Most Played"};
     static public DrawerLayout drawer;
+    AppDatabase appDatabase;
     SharedPreferences sharedPreferences;
     public static ImageView nowPlayingImage;
     public static TextView nowPlaintName;
     public OnBackPress onBackPress;
     Cursor cursor;
     static Observer<Songs> songChangedObserver;
+    static Observer<EqualizerBands> equalizerBandsObserver;
     static Observer<Boolean> fragmentRequestObserver;
     Fragment [] fragments = {new TracksFragment(),new AlbumFragment(), new ArtistFragment(),new GenresFragment(),new FolderFragment(),new Playlists()};
     Fragment [] fragments2 = {new MostPlayedFragment(),new FavFragment(), new Playlists()};
@@ -181,7 +183,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
               intent.setData(currentsonguri);
               intent.putExtra("flag",1);
               */
-              NavigationControler.navigateToPlayerFragment(getSupportFragmentManager(),im);
+              Intent i = new Intent(MainActivity.this,MP_NowPlayingActivity.class);
+              Bundle bundle = new Bundle();
+              i.putExtras(bundle);
+              startActivity(i);
+             // NavigationControler.navigateToPlayerFragment(getSupportFragmentManager());
 
 
           }
@@ -269,7 +275,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         };
 
+        equalizerBandsObserver =  new Observer<EqualizerBands>() {
+            @Override
+            public void onChanged(@Nullable EqualizerBands equalizerBands) {
+                if(mBound)
+                {
+                    Log.d("msg","trying to update the mediaPlayer");
+                }
+            }
+        };
+
+
         mainActivityViewModel.getNowPlaying().observe(this, songChangedObserver);
+        mainActivityViewModel.getUpdateEqualizer().observe(this,equalizerBandsObserver);
         Log.d("msg","subscriber is set in main activity");
 
     }
@@ -329,12 +347,53 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        int id = item.getItemId();
-        if(id==R.id.equaliser)
-        {
-            Intent i = new Intent(MainActivity.this,EqualiserAc.class);
-            startActivity(i);
-        }
+        final int id = item.getItemId();
+        drawer.closeDrawer(Gravity.LEFT);
+        drawer.animate().setDuration(300).setListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                if(id==R.id.equaliser)
+                {
+                    Intent i = new Intent(MainActivity.this,Fragment_Container_Activity.class);
+                    Bundle bundle = new Bundle();
+                    bundle.putString("which","Equaliser");
+                    i.putExtras(bundle);
+                    startActivity(i);
+                }
+                else if(id==R.id.Playlist)
+                {
+                    viewPager.setAdapter(pagerAdapter2);
+                    tabLayout.setViewPager(viewPager);
+                    //NavigationControler.navigateToPlaylistFragment(getSupportFragmentManager());
+                }
+                else if(id==R.id.Library)
+                {
+                    viewPager.setAdapter(pagerAdapter);
+                    tabLayout.setViewPager(viewPager);
+                }
+                else if(id==R.id.Settings)
+                {
+                   Intent i = new Intent(MainActivity.this,Setting_Activity.class);
+                   startActivity(i);
+
+                }
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animation) {
+
+            }
+        }).start();
         return true;
     }
 
@@ -375,7 +434,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         @Override
         public Fragment getItem(int position) {
-            return fragments2[position];
+            switch (position)
+            {
+                case 0: return new FavFragment();
+
+                case 1: return new RecentlyAdded();
+
+                case 2: return new MostPlayedFragment();
+            }
+            return null;
         }
 
         @Override
@@ -623,6 +690,33 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
           }
       }
       //  new SetImage(null,Mp3PlayerApplication.applicationModelClass.CurrentPlayingSong.getAlbumart(),1,im).execute();
+    }
+
+    public class SetBandValue extends AsyncTask<Void,Void,Void> {
+
+        public SetBandValue() {
+            super();
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            appDatabase =  Room.databaseBuilder(getApplicationContext(),
+                    AppDatabase.class, "database-name").build();
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            appDatabase.equaliserEntityInterface().clearDatabase();
+            appDatabase.equaliserEntityInterface().insertOne(CloneEqualiser.CloneFromEqualiserBandToEntity(Mp3PlayerApplication.equalizerBands));
+            Log.d("msg","equaliser val setting = "+Mp3PlayerApplication.equalizerBands.getBand0()+" "+Mp3PlayerApplication.equalizerBands.getBand1()+" "+Mp3PlayerApplication.equalizerBands.getBand2()+" "+Mp3PlayerApplication.equalizerBands.getBand3()+" "+Mp3PlayerApplication.equalizerBands.getBand4()+" ");
+            return null;
+        }
     }
 
     public class SetImage extends AsyncTask<Void,Void,Void>

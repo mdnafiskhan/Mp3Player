@@ -1,12 +1,9 @@
 package com.developmentforfun.mdnafiskhan.mp3player.Fragments;
 
-import android.content.Context;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
@@ -15,26 +12,20 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
 
-import com.developmentforfun.mdnafiskhan.mp3player.Activities.Playlist;
-import com.developmentforfun.mdnafiskhan.mp3player.DataBase.DataBaseClass;
+import com.developmentforfun.mdnafiskhan.mp3player.Interface.UpdatePlaylistInterface;
 import com.developmentforfun.mdnafiskhan.mp3player.Models.Songs;
 import com.developmentforfun.mdnafiskhan.mp3player.R;
-import com.developmentforfun.mdnafiskhan.mp3player.Service.MusicService;
+import com.developmentforfun.mdnafiskhan.mp3player.SongLoader.PlaylistProvider;
 import com.developmentforfun.mdnafiskhan.mp3player.customAdapters.PlaylistRecyclerAdap;
 
 import java.util.ArrayList;
-
-import jp.wasabeef.recyclerview.animators.SlideInLeftAnimator;
 
 /**
  * Created by mdnafiskhan on 25-03-2017.
  */
 
-public class Playlists extends Fragment {
+public class Playlists extends Fragment implements UpdatePlaylistInterface {
     public RecyclerView recyclerView;
     public ArrayList<Songs> s = new ArrayList<>();
     public ArrayList<com.developmentforfun.mdnafiskhan.mp3player.Models.Playlist> playlists = new ArrayList<>();
@@ -51,13 +42,19 @@ public class Playlists extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.listviewofsongs, container, false);
         recyclerView = (RecyclerView) v.findViewById(R.id.recyclerview);
+        recyclerView.setAdapter(new PlaylistRecyclerAdap(getContext(),playlists,this));
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         new getPalylist().execute();
         return v;
     }
 
+    @Override
+    public void reloadPlayList() {
+        new getPalylist().execute();
+    }
 
 
-   public class getPalylist extends AsyncTask<Void,Void,Void>
+    public class getPalylist extends AsyncTask<Void,Void,Void>
     {
         Cursor cursor;
         public getPalylist() {
@@ -67,14 +64,13 @@ public class Playlists extends Fragment {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
+            playlists.clear();
             cursor = getContext().getContentResolver().query(MediaStore.Audio.Playlists.EXTERNAL_CONTENT_URI, columns, null, null, orderBy);
         }
 
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-            recyclerView.setAdapter(new PlaylistRecyclerAdap(getContext(),playlists));
-            recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
             recyclerView.getAdapter().notifyDataSetChanged();
             Log.d("playlist size",playlists.size()+"");
 
@@ -82,7 +78,7 @@ public class Playlists extends Fragment {
 
         @Override
         protected Void doInBackground(Void... params) {
-          playlists = com.developmentforfun.mdnafiskhan.mp3player.SongLoader.Playlist.queryPlaylists(getContext().getContentResolver());
+          playlists.addAll(PlaylistProvider.queryPlaylists(getContext().getContentResolver()));
             return null;
         }
     }

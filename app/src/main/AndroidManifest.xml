@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.developmentforfun.mdnafiskhan.mp3player"
-   >
+    package="com.developmentforfun.mdnafiskhan.mp3player" >
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -11,17 +10,17 @@
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
 
     <application
+        android:name=".Mp3PlayerApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:largeHeap="true"
         android:supportsRtl="true"
-        android:name=".Mp3PlayerApplication"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme" >
         <activity
             android:name=".Activities.MainActivity"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme">
+            android:theme="@style/AppTheme" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -66,15 +65,16 @@
         </activity>
         <activity
             android:name=".Activities.AlbumDetail"
-            android:theme="@style/AlbumTheme">
+            android:theme="@style/AlbumTheme" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity android:name=".Activities.SplashActivity"
-            android:theme="@style/AppTheme">
+        <activity
+            android:name=".Activities.SplashActivity"
+            android:theme="@style/AppTheme" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -83,7 +83,7 @@
         </activity>
         <activity
             android:name=".Activities.Playlist"
-            android:theme="@style/AppTheme">
+            android:theme="@style/AppTheme" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -93,7 +93,7 @@
         <activity
             android:name=".Activities.PlayerActivity"
             android:label="Now Playing"
-            android:theme="@style/AppTheme">
+            android:theme="@style/AppTheme" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -101,8 +101,9 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".Activities.EqualiserAc"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:name=".Activities.Setting_Activity"
+            android:label="Settings"
+            android:theme="@style/SettingTheme" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -111,7 +112,7 @@
         </activity>
         <activity
             android:name=".Activities.PlaylistActivity"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.NoActionBar" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -120,7 +121,7 @@
         </activity>
         <activity
             android:name=".Activities.ArtistActivity"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.NoActionBar" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -128,7 +129,7 @@
             </intent-filter>
         </activity>
 
-        <receiver android:name=".BroadcastRecivers.MediaButtonReciver">
+        <receiver android:name=".BroadcastRecivers.MediaButtonReciver" >
             <intent-filter>
                 <action android:name="android.intent.action.MEDIA_BUTTON" />
             </intent-filter>
@@ -147,16 +148,16 @@
             android:label="@string/title_activity_artist_"
             android:theme="@style/AppTheme" />
         <activity
+            android:name=".Activities.Fragment_Container_Activity"
+            android:label="@string/title_activity_artist_"
+            android:theme="@style/AppTheme" />
+        <activity
             android:name=".Activities.Genre_Activity"
             android:theme="@style/AppTheme" />
-        <activity android:name=".Activities.ActivityFragments.NowPlayingSongList_Fragment"
-            android:theme="@style/AppTheme">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-
+        <activity
+            android:name=".Activities.MP_NowPlayingActivity"
+            android:label="@string/title_activity_mp__now_playing"
+            android:theme="@style/AppTheme" >
         </activity>
     </application>
 

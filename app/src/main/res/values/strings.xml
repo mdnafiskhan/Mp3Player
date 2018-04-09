@@ -17,4 +17,6 @@
     </string>
     <string name="title_activity_artist_">Artist_Activity</string>
     <string name="section_format">Hello World from section: %1$d</string>
+    <string name="title_activity_playlist_fragment">PlaylistFragmentActivity</string>
+    <string name="title_activity_mp__now_playing">MP_NowPlayingActivity</string>
 </resources>

@@ -17,7 +17,7 @@
         <item name="android:textColorPrimary">#ffffff</item>
     </style>
 
-    <style name="SwitchCompatStyle" >
+    <style name="SwitchCompatStyle">
         <item name="thumbTint">@color/switch_color</item>
         <item name="trackTint">@color/switch_color</item>
     </style>
@@ -46,13 +46,15 @@
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
-    <style name="MyAlertDialogStyle" parent="Theme.AppCompat.Light.Dialog.Alert">
+    <style name="MyAlertDialogStyle" parent="android:Theme.DeviceDefault.Light.Dialog">
         <!-- Used for the buttons -->
-        <item name="colorAccent">#FFC107</item>
+        <item name="colorAccent">#FFFFFF</item>
         <!-- Used for the title and text -->
         <item name="android:textColorPrimary">#FFFFFF</item>
         <!-- Used for the background -->
-        <item name="android:background">#4CAF50</item>
+        <item name="colorPrimary">#666666</item>
+        <item name="android:colorBackground">#000000</item>
+        <item name="android:colorForeground">#AAAAAA</item>
     </style>
 
 
@@ -60,6 +62,19 @@
         <item name="backgroundTint">#cccccc</item>
         <item name="overlapAnchor">true</item>
         <item name="background">@drawable/spinner_background</item>
+    </style>
+
+    <style name="Theme.AlbumTheme.Light.NoActionBar" parent="android:Theme.Holo.Light.NoActionBar" />
+
+    <style name="SettingTheme" parent="android:Theme.Material.Light.DarkActionBar" >
+        <item name="android:colorAccent">#162825</item>
+        <item name="android:colorForeground">#fcf8e0</item>
+        <item name="android:navigationBarColor">#000005</item>
+        <item name="android:colorBackground">#ffffff</item>
+        <item name="android:colorPrimary">#111e1c</item>
+        <item name="android:colorPrimaryDark">#000005</item>
+        <item name="android:textColorPrimary">#dddddd</item>
+        <item name="android:windowBackground">@color/white</item>
     </style>
 
 
